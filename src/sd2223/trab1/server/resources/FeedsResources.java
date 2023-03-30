@@ -20,6 +20,7 @@ import sd2223.trab1.server.UsersServer;
 
 //ACABAR
 //VAMOS TER DE CRIAR UM FEEDSSERVER TAMBÉM CERTO?
+//COMO CONFIGURAR
 @Singleton
 public class FeedsResources implements FeedsService {
 
