@@ -1,5 +1,6 @@
 package sd2223.trab1.server;
 
+import java.net.InetAddress;
 import java.net.URI;
 import java.util.logging.Logger;
 
@@ -20,7 +21,8 @@ public class FeedsServer {
 
 	public static final int PORT = 8080;
 	public static final String SERVICE = "FeedsService";
-	private static final String SERVER_URI_FMT = "http://%s.%s:%s/rest";
+	//private static final String SERVER_URI_FMT = "http://%s.%s:%s/rest";
+	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
 	private static final String MESSAGE = "%s:%s %s";
 
 	public static void main(String[] args) {
@@ -30,17 +32,20 @@ public class FeedsServer {
 			int id = Integer.parseInt(args[1]);
 
 			ResourceConfig config = new ResourceConfig();
-			FeedsResources instance = new FeedsResources(domain, id);
-			config.register(instance.getClass());
+			//FeedsResources instance = new FeedsResources(domain, id);
+			//config.register(instance.getClass());
+			config.register(FeedsResources.class);
+			
+			String ip = InetAddress.getLocalHost().getHostAddress();
 
-			String serverURI = String.format(SERVER_URI_FMT, "feeds", domain, PORT);
+			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);
 
 			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 			
-			Discovery announcement = Discovery.getInstance();
-			String announceMessage = String.format(MESSAGE, domain, "feeds", serverURI);
-			announcement.announce(domain, announceMessage);
+//			Discovery announcement = Discovery.getInstance();
+//			String announceMessage = String.format(MESSAGE, domain, "feeds", serverURI);
+//			announcement.announce(domain, announceMessage);
 
 			// More code can be executed here...
 		} catch (Exception e) {

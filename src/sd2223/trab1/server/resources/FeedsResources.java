@@ -35,23 +35,23 @@ public class FeedsResources implements FeedsService {
 	private final Map<String, List<String>> subscribed = new HashMap<String, List<String>>();
 	private static Logger Log = Logger.getLogger(UsersResources.class.getName());
 
-	public FeedsResources(String domain, int idBeginner) {
-		this.domain = domain;
-		this.messageIdAssigner = idBeginner;
-		Discovery client = Discovery.getInstance();
-		String[] domainserviceURIs = client.knownUrisOf(domain);
-		boolean found = false;
-		int i = 0;
-		while (!found) {
-			String uris = domainserviceURIs[i];
-			if (uris.contains("users")) {
-				found = true;
-				String[] uriSplitted = uris.split(" ");
-				domainUsersURI = uriSplitted[1];
-			} else
-				i++;
-		}
-	}
+//	public FeedsResources(String domain, int idBeginner) {
+//		this.domain = domain;
+//		this.messageIdAssigner = idBeginner;
+////		Discovery client = Discovery.getInstance();
+////		String[] domainserviceURIs = client.knownUrisOf(domain);
+////		boolean found = false;
+////		int i = 0;
+////		while (!found) {
+////			String uris = domainserviceURIs[i];
+////			if (uris.contains("users")) {
+////				found = true;
+////				String[] uriSplitted = uris.split(" ");
+////				domainUsersURI = uriSplitted[1];
+////			} else
+////				i++;
+////		}
+//	}
 
 	@Override
 	public long postMessage(String userANDdomain, String pwd, Message msg) {

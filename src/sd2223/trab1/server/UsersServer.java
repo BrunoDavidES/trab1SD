@@ -1,5 +1,6 @@
 package sd2223.trab1.server;
 
+import java.net.InetAddress;
 import java.net.URI;
 import java.util.logging.Logger;
 
@@ -20,7 +21,8 @@ public class UsersServer {
 
 	public static final int PORT = 8080;
 	public static final String SERVICE = "UsersService";
-	private static final String SERVER_URI_FMT = "http://%s.%s:%s/rest";
+	// private static final String SERVER_URI_FMT = "http://%s.%s:%s/rest";
+	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
 	private static final String MESSAGE = "%s:%s %s";
 
 	public static void main(String[] args) {
@@ -29,17 +31,20 @@ public class UsersServer {
 			String domain = args[0];
 
 			ResourceConfig config = new ResourceConfig();
-			UsersResources instance = new UsersResources(domain);
-			config.register(instance.getClass());
+			//UsersResources instance = new UsersResources(domain);
+			//config.register(instance.getClass());
+			config.register(new UsersResources(domain));
 
-			String serverURI = String.format(SERVER_URI_FMT, "users", domain, PORT);
+			String ip = InetAddress.getLocalHost().getHostAddress();
+
+			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);
 
 			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 
-			Discovery announcement = Discovery.getInstance();
-			String announceMessage = String.format(MESSAGE, domain, "users", serverURI);
-			announcement.announce(domain, announceMessage);
+//			Discovery announcement = Discovery.getInstance();
+//			String announceMessage = String.format(MESSAGE, domain, "users", serverURI);
+//			announcement.announce(domain, announceMessage);
 
 			// More code can be executed here...
 		} catch (Exception e) {

@@ -25,21 +25,24 @@ public class UsersResources implements UsersService {
 	private final Map<String, User> users = new HashMap<>();
 	private static Logger Log = Logger.getLogger(UsersResources.class.getName());
 
+	public UsersResources() {
+	}
+
 	public UsersResources(String domain) {
-		this.domain=domain;
-		Discovery client = Discovery.getInstance();
-		String[] domainserviceURIs = client.knownUrisOf(domain);
-		boolean found = false;
-		int i = 0;
-		while (!found) {
-			String uris = domainserviceURIs[i];
-			if (uris.contains("feeds")) {
-				found = true;
-				String[] uriSplitted = uris.split(" ");
-				domainUsersURI = uriSplitted[1];
-			} else
-				i++;
-		}
+		this.domain = domain;
+//		Discovery client = Discovery.getInstance();
+//		String[] domainserviceURIs = client.knownUrisOf(domain);
+//		boolean found = false;
+//		int i = 0;
+//		while (!found) {
+//			String uris = domainserviceURIs[i];
+//			if (uris.contains("feeds")) {
+//				found = true;
+//				String[] uriSplitted = uris.split(" ");
+//				domainUsersURI = uriSplitted[1];
+//			} else
+//				i++;
+//		}
 	}
 
 	@Override
