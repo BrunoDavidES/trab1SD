@@ -1,4 +1,4 @@
-package sd2223.trab1.api.soap;
+package sd2223.trab1.api.soap.users;
 
 import jakarta.xml.ws.WebFault;
 

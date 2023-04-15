@@ -1,4 +1,4 @@
-package sd2223.trab1.api.soap;
+package sd2223.trab1.api.soap.users;
 
 import java.util.List;
 
@@ -59,4 +59,7 @@ public interface UsersService {
 	 */
 	@WebMethod
 	List<User> searchUsers(String pattern) throws UsersException;	
+	
+	void verifyPassword(String name, String password) throws UsersException;
+	
 }

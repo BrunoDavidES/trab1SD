@@ -1,4 +1,4 @@
-package sd2223.trab1.server;
+package sd2223.trab1.server.rest.users;
 
 import java.net.InetAddress;
 import java.net.URI;
@@ -8,11 +8,11 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import sd2223.trab1.multicast.Discovery;
-import sd2223.trab1.server.resources.UsersResources;
+import sd2223.trab1.server.java.JavaUsers;
 
-public class UsersServer {
+public class RestUsersServer {
 
-	private static Logger Log = Logger.getLogger(UsersServer.class.getName());
+	private static Logger Log = Logger.getLogger(RestUsersServer.class.getName());
 
 	static {
 		System.setProperty("java.net.preferIPv4Stack", "true");
@@ -21,7 +21,6 @@ public class UsersServer {
 
 	public static final int PORT = 8080;
 	public static final String SERVICE = "UsersService";
-	// private static final String SERVER_URI_FMT = "http://%s.%s:%s/rest";
 	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
 	private static final String MESSAGE = "%s:%s %s";
 
@@ -31,9 +30,7 @@ public class UsersServer {
 			String domain = args[0];
 
 			ResourceConfig config = new ResourceConfig();
-			//UsersResources instance = new UsersResources(domain);
-			//config.register(instance.getClass());
-			config.register(new UsersResources(domain));
+			config.register(new RestUsersResource(domain));
 
 			String ip = InetAddress.getLocalHost().getHostAddress();
 
@@ -42,9 +39,9 @@ public class UsersServer {
 
 			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 
-//			Discovery announcement = Discovery.getInstance();
-//			String announceMessage = String.format(MESSAGE, domain, "users", serverURI);
-//			announcement.announce(domain, announceMessage);
+			Discovery announcement = Discovery.getInstance();
+			String announceMessage = String.format(MESSAGE, domain, "users", serverURI);
+			announcement.announce(domain, announceMessage);
 
 			// More code can be executed here...
 		} catch (Exception e) {
