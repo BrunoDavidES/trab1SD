@@ -81,7 +81,8 @@ public class JavaUsers implements Users {
 			Log.info("There's missing information!");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
-		if (name == null || !name.equals(user.getName()) ) {
+		Log.fine("Name: " + name + ", User name: " + user.getName());
+		if (!user.getName().equals(name)) {
 			Log.info("Name does not match!");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
