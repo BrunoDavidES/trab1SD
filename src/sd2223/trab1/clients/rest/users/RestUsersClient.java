@@ -24,17 +24,13 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<String> clt_createUser(User user) {
-
 		Response r = target.request().post(Entity.entity(user, MediaType.APPLICATION_JSON));
-
 		return super.toJavaResult(r, String.class);
 	}
 
 	private Result<User> clt_getUser(String name, String pwd) {
-
 		Response r = target.path(name).queryParam(UsersService.PWD, pwd).request().accept(MediaType.APPLICATION_JSON)
 				.get();
-
 		return super.toJavaResult(r, User.class);
 	}
 
@@ -51,15 +47,14 @@ public class RestUsersClient extends RestClient implements Users {
 	}
 
 	private Result<List<User>> clt_searchUsers(String pattern) {
-		Response r = target.path("/").queryParam(UsersService.QUERY, pattern).request().accept(MediaType.APPLICATION_JSON)
-				.get();
-		//return super.toJavaResult(r, ArrayList.class);
-		return null;
+		Response r = target.path("/").queryParam(UsersService.QUERY, pattern).request()
+				.accept(MediaType.APPLICATION_JSON).get();
+		return super.toJavaResult(r, new GenericType<List<User>>() {
+		});
 	}
 
 	private Result<Void> clt_verifyPassword(String name, String pwd) {
 		Response r = target.path(name).path(UsersService.PWD).queryParam(UsersService.PWD, pwd).request().get();
-
 		return super.toJavaResult(r, Void.class);
 	}
 

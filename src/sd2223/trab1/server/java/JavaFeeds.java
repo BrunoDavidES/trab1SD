@@ -19,15 +19,14 @@ import sd2223.trab1.api.java.Users;
 import sd2223.trab1.api.java.Result.ErrorCode;;
 
 public class JavaFeeds implements Feeds {
+	String domain;
+
 	// VER MELHOR
-	private String domain;
-	private String domainUsersURI;
 	private long messageIdAssigner;
 	private final Map<String, Map<Long, Message>> feeds = new HashMap<String, Map<Long, Message>>();
 	private final Map<String, Map<Long, Message>> subscribedFeeds = new HashMap<String, Map<Long, Message>>();
 	private final Map<String, List<String>> subscribed = new HashMap<String, List<String>>();
 	private static Logger Log = Logger.getLogger(JavaFeeds.class.getName());
-	
 
 //		public FeedsResources(String domain, int idBeginner) {
 //			this.domain = domain;
@@ -57,15 +56,8 @@ public class JavaFeeds implements Feeds {
 			Log.info("Not the user's domain");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
-		try {
-			String username = userANDdomain.split("@")[0];
-			String[] args = new String[] { domainUsersURI, username, pwd };
-			CheckUserClient.main(args);
-		} catch (WebApplicationException e) {
-			return Result.error(ErrorCode.FORBIDDEN);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		String username = userANDdomain.split("@")[0];
+//		if(domainUsersClient.verifyPassword(username, pwd)!= )
 		Message message = new Message(this.messageIdAssigner, userANDdomain, msg.getDomain(), msg.getText());
 		this.messageIdAssigner++;
 		if (!feeds.containsKey(userANDdomain)) {

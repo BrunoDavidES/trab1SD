@@ -26,46 +26,66 @@ public class RestFeedsClient extends RestClient implements Feeds {
 		target = client.target(serverURI).path(FeedsService.PATH);
 	}
 
+	private Result<Long> clt_postMessage(String userANDdomain, String pwd, Message msg) {
+
+	}
+
+	private Result<Void> clt_removeFromPersonalFeed(String userANDdomain, long mid, String pwd) {
+
+	}
+
+	private Result<Message> clt_getMessage(String userANDdomain, long mid) {
+
+	}
+
+	private Result<List<Message>> clt_getMessages(String userANDdomain, long time) {
+
+	}
+
+	private Result<Void> clt_subUser(String userANDdomain, String userSub, String pwd) {
+
+	}
+
+	private Result<Void> clt_unsubscribeUser(String userANDdomain, String userSub, String pwd) {
+
+	}
+
+	private Result<List<String>> clt_listSubs(String userANDdomain) {
+
+	}
 
 	@Override
 	public Result<Long> postMessage(String userANDdomain, String pwd, Message msg) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_postMessage(userANDdomain, pwd, msg));
 	}
 
 	@Override
 	public Result<Void> removeFromPersonalFeed(String userANDdomain, long mid, String pwd) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_removeFromPersonalFeed(userANDdomain, mid, pwd));
 	}
 
 	@Override
 	public Result<Message> getMessage(String userANDdomain, long mid) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_getMessage(userANDdomain, mid));
 	}
 
 	@Override
 	public Result<List<Message>> getMessages(String userANDdomain, long time) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_getMessages(userANDdomain, time));
 	}
 
 	@Override
 	public Result<Void> subUser(String userANDdomain, String userSub, String pwd) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_subUser(userANDdomain, userSub, pwd));
 	}
 
 	@Override
 	public Result<Void> unsubscribeUser(String userANDdomain, String userSub, String pwd) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_unsubscribeUser(userANDdomain, userSub, pwd));
 	}
 
 	@Override
 	public Result<List<String>> listSubs(String userANDdomain) {
-		// TODO Auto-generated method stub
-		return null;
+		return super.reTry(() -> clt_listSubs(userANDdomain));
 	}
 }
