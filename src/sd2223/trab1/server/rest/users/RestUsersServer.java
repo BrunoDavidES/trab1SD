@@ -8,6 +8,7 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import sd2223.trab1.multicast.Discovery;
+import sd2223.trab1.multicast.Domain;
 import sd2223.trab1.server.java.JavaUsers;
 
 public class RestUsersServer {
@@ -28,6 +29,8 @@ public class RestUsersServer {
 		try {
 
 			String domain = args[0];
+			
+			Domain.set(domain);
 
 			ResourceConfig config = new ResourceConfig();
 			config.register(new RestUsersResource(domain));

@@ -16,6 +16,8 @@ import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
+import sd2223.trab1.clients.UsersClientFactory;
+import sd2223.trab1.multicast.Domain;
 import sd2223.trab1.api.java.Result.ErrorCode;;
 
 public class JavaFeeds implements Feeds {
@@ -28,24 +30,6 @@ public class JavaFeeds implements Feeds {
 	private final Map<String, List<String>> subscribed = new HashMap<String, List<String>>();
 	private static Logger Log = Logger.getLogger(JavaFeeds.class.getName());
 
-//		public FeedsResources(String domain, int idBeginner) {
-//			this.domain = domain;
-//			this.messageIdAssigner = idBeginner;
-////			Discovery client = Discovery.getInstance();
-////			String[] domainserviceURIs = client.knownUrisOf(domain);
-////			boolean found = false;
-////			int i = 0;
-////			while (!found) {
-////				String uris = domainserviceURIs[i];
-////				if (uris.contains("users")) {
-////					found = true;
-////					String[] uriSplitted = uris.split(" ");
-////					domainUsersURI = uriSplitted[1];
-////				} else
-////					i++;
-////			}
-//		}
-
 	@Override
 	public Result<Long> postMessage(String userANDdomain, String pwd, Message msg) {
 		if (userANDdomain == null || pwd == null || msg == null) {
@@ -57,7 +41,13 @@ public class JavaFeeds implements Feeds {
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
 		String username = userANDdomain.split("@")[0];
-//		if(domainUsersClient.verifyPassword(username, pwd)!= )
+		
+		Users usersClient = UsersClientFactory.getUsersClient(Domain.get());
+		var r = usersClient.verifyPassword(username, pwd);
+		if(!r.isOK()) {
+			Log.info("The user does not exist or the password is incorrect");
+			return Result.error(ErrorCode.FORBIDDEN);
+		}
 		Message message = new Message(this.messageIdAssigner, userANDdomain, msg.getDomain(), msg.getText());
 		this.messageIdAssigner++;
 		if (!feeds.containsKey(userANDdomain)) {

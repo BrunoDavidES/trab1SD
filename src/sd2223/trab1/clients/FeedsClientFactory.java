@@ -3,8 +3,11 @@ package sd2223.trab1.clients;
 import java.net.URI;
 
 import sd2223.trab1.api.java.Feeds;
+import sd2223.trab1.api.java.Users;
 import sd2223.trab1.clients.rest.feeds.RestFeedsClient;
 import sd2223.trab1.clients.soap.feeds.SoapFeedsClient;
+import sd2223.trab1.multicast.Discovery;
+import sd2223.trab1.multicast.Domain;
 
 public class FeedsClientFactory {
 
@@ -20,5 +23,23 @@ public class FeedsClientFactory {
 			return new SoapFeedsClient(serverURI);
 		else
 			throw new RuntimeException("Unknown service type..." + uriString);
+	}
+
+	public static Feeds getFeedsClient(String domain) {
+		Discovery discovery = Discovery.getInstance();
+		String[] domainserviceURIs = discovery.knownUrisOf(domain);
+		String uri = null;
+		for (String serviceURI : domainserviceURIs) {
+			if (serviceURI.contains("feeds")) {
+				String[] splitted = serviceURI.split(" ");
+				uri = splitted[1];
+			}
+		}
+		Feeds domainFeedClient = FeedsClientFactory.get(URI.create(uri));
+		return domainFeedClient;
+	}
+
+	public static String getUsersDomain() {
+		return Domain.get();
 	}
 }

@@ -49,8 +49,7 @@ public class RestUsersClient extends RestClient implements Users {
 	private Result<List<User>> clt_searchUsers(String pattern) {
 		Response r = target.path("/").queryParam(UsersService.QUERY, pattern).request()
 				.accept(MediaType.APPLICATION_JSON).get();
-		return super.toJavaResult(r, new GenericType<List<User>>() {
-		});
+		return super.toJavaResult(r, new GenericType<List<User>>() {});
 	}
 
 	private Result<Void> clt_verifyPassword(String name, String pwd) {
