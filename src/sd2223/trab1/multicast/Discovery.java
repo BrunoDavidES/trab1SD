@@ -174,6 +174,7 @@ class DiscoveryImpl implements Discovery {
 			knownURIs.put(domain, serviceURIs);
 		} else {
 			serviceURIs.add(message);
+			//ver se está a mais
 			knownURIs.put(domain, serviceURIs);
 		}
 	}

@@ -59,4 +59,8 @@ public class User {
 	public String toString() {
 		return "User [name=" + name + ", pwd=" + pwd + ", displayName=" + displayName + ", domain=" + domain + "]";
 	}
+
+	public User creatClone(){
+		return new User(this.name, "", this.domain, this.displayName);
+	}
 }

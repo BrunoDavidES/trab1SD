@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Response.Status;
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
@@ -87,6 +84,11 @@ public class JavaUsers implements Users {
 	}
 
 	@Override
+	public boolean checkUser(String username) {
+		return users.containsValue(username);
+	}
+
+	@Override
 	public Result<User> deleteUser(String name, String pwd) {
 		Log.info("deleteUser : user = " + name + "; pwd = " + pwd);
 		if (name == null || pwd == null) {
@@ -114,12 +116,10 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		List<User> toList = new ArrayList<User>();
-		Set<String> names = users.keySet();
-		for (String uName : names) {
-			if (uName.contains(pattern)) {
-				User user = users.get(uName);
-				user.setPwd("");
-				toList.add(user);
+		var entries = users.entrySet();
+		for (var e : entries) {
+			if (e.getKey().contains(pattern)) {
+				toList.add(e.getValue().creatClone());
 			}
 		}
 		return Result.ok(toList);

@@ -41,11 +41,16 @@ public class JavaFeeds implements Feeds {
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
 		String username = userANDdomain.split("@")[0];
-		
 		Users usersClient = UsersClientFactory.getUsersClient(Domain.get());
+		//ADICIONADO POR MANEL, VER SE ESTÁ BEM
+		var u = usersClient.checkUser(username);
+		if(!u){
+			Log.info("User does not exist.");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
 		var r = usersClient.verifyPassword(username, pwd);
 		if(!r.isOK()) {
-			Log.info("The user does not exist or the password is incorrect");
+			Log.info("The password is incorrect");
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
 		Message message = new Message(this.messageIdAssigner, userANDdomain, msg.getDomain(), msg.getText());
@@ -70,6 +75,14 @@ public class JavaFeeds implements Feeds {
 		}
 		if (!userANDdomain.contains(domain)) {
 			Log.info("Not the user's domain");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
+		String username = userANDdomain.split("@")[0];
+		Users usersClient = UsersClientFactory.getUsersClient(Domain.get());
+		//ADICIONADO POR MANEL, VER SE ESTÁ BEM
+		var u = usersClient.checkUser(username);
+		if(!u){
+			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
 //		try {
@@ -98,6 +111,14 @@ public class JavaFeeds implements Feeds {
 		}
 		if (!userANDdomain.contains(domain)) {
 			Log.info("Not the user's domain");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
+		String username = userANDdomain.split("@")[0];
+		Users usersClient = UsersClientFactory.getUsersClient(Domain.get());
+		//ADICIONADO POR MANEL, VER SE ESTÁ BEM
+		var u = usersClient.checkUser(username);
+		if(!u){
+			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
 		Map<Long, Message> personalMessages = feeds.get(userANDdomain);
@@ -134,6 +155,14 @@ public class JavaFeeds implements Feeds {
 			Log.info("Not the user's domain");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
+		String username = userANDdomain.split("@")[0];
+		Users usersClient = UsersClientFactory.getUsersClient(Domain.get());
+		//ADICIONADO POR MANEL, VER SE ESTÁ BEM
+		var u = usersClient.checkUser(username);
+		if(!u){
+			Log.info("User does not exist.");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
 		List<Message> toList = new ArrayList<Message>();
 		Collection<Message> messages = feeds.get(userANDdomain).values();
 		if (messages != null) {
@@ -164,6 +193,15 @@ public class JavaFeeds implements Feeds {
 		}
 		if (!userANDdomain.contains(domain)) {
 			Log.info("Not the user's domain");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
+		String username = userANDdomain.split("@")[0];
+		Users usersClient = UsersClientFactory.getUsersClient(Domain.get());
+		//ADICIONADO POR MANEL, VER SE ESTÁ BEM
+		var u = usersClient.checkUser(username);
+		var us = usersClient.checkUser(userSub);
+		if(!u || !us){
+			Log.info("User does not exist or user to be subscribed does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
 //		try {
@@ -212,6 +250,15 @@ public class JavaFeeds implements Feeds {
 //				users.add(userSub);
 //				subscribed.put(userANDdomain, users);
 //			}
+		String username = userANDdomain.split("@")[0];
+		Users usersClient = UsersClientFactory.getUsersClient(Domain.get());
+		//ADICIONADO POR MANEL, VER SE ESTÁ BEM
+		var u = usersClient.checkUser(username);
+		var us = usersClient.checkUser(userSub);
+		if(!u || !us){
+			Log.info("User does not exist or user to be subscribed does not exist.");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
 		return Result.ok();
 	}
 
@@ -233,6 +280,14 @@ public class JavaFeeds implements Feeds {
 //				users.add(userSub);
 //				subscribed.put(userANDdomain, users);
 //			}
+		String username = userANDdomain.split("@")[0];
+		Users usersClient = UsersClientFactory.getUsersClient(Domain.get());
+		//ADICIONADO POR MANEL, VER SE ESTÁ BEM
+		var u = usersClient.checkUser(username);
+		if(!u){
+			Log.info("User does not exist.");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
 		return Result.ok();
 	}
 
