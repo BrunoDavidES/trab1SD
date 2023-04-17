@@ -19,5 +19,5 @@ public interface Users {
 	Result<Void> verifyPassword(String name, String pwd);
 
 	//ADICIONADO POR MANEL
-	boolean checkUser(String username);
+	Result<Void> checkUser(String name);
 }

@@ -49,10 +49,16 @@ public interface UsersService {
 	@Produces(MediaType.APPLICATION_JSON)
 	User getUser(@PathParam(NAME) String name, @QueryParam(PWD) String pwd);
 
-	//ADICIONADO
+	// ADICIONADO
 	@GET
-	@Path("/{" + NAME+ "}/" + PWD)
+	@Path("/{" + NAME + "}/" + PWD)
 	void verifyPassword(@PathParam(NAME) String name, @QueryParam(PWD) String pwd);
+
+	// ADICIONADO
+	@GET
+	@Path("/check/{" + NAME + "}/")
+	void checkUser(@PathParam(NAME) String name);
+
 	/**
 	 * Modifies the information of a user. Values of null in any field of the user
 	 * will be considered as if the the fields is not to be modified (the name

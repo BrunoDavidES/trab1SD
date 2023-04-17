@@ -33,9 +33,22 @@ public class RestFeedsClient extends RestClient implements Feeds {
 
 	}
 
+	private Result<Void> clt_postSubMessage(String userANDdomain, Message msg) {
+		Response r = target.path(userANDdomain).request().accept(MediaType.APPLICATION_JSON)
+				.post(Entity.entity(msg, MediaType.APPLICATION_JSON));
+		return super.toJavaResult(r, Void.class);
+
+	}
+
 	private Result<Void> clt_removeFromPersonalFeed(String userANDdomain, long mid, String pwd) {
 		Response r = target.path(userANDdomain).path(Long.toString(mid)).queryParam(UsersService.PWD, pwd).request()
 				.accept(MediaType.APPLICATION_JSON).delete();
+		return super.toJavaResult(r, Void.class);
+
+	}
+
+	private Result<Void> clt_removeFeed(String userANDdomain) {
+		Response r = target.path(userANDdomain).request().accept(MediaType.APPLICATION_JSON).delete();
 		return super.toJavaResult(r, Void.class);
 
 	}
@@ -59,9 +72,20 @@ public class RestFeedsClient extends RestClient implements Feeds {
 		return super.toJavaResult(r, Void.class);
 	}
 
+	private Result<Void> clt_addSubscriber(String userANDdomain, String sub) {
+		Response r = target.path(userANDdomain).path(sub).request().accept(MediaType.APPLICATION_JSON)
+				.post(Entity.entity(sub, MediaType.APPLICATION_JSON));
+		return super.toJavaResult(r, Void.class);
+	}
+
 	private Result<Void> clt_unsubscribeUser(String userANDdomain, String userSub, String pwd) {
 		Response r = target.path(userANDdomain).path(userSub).queryParam(UsersService.PWD, pwd).request()
 				.accept(MediaType.APPLICATION_JSON).delete();
+		return super.toJavaResult(r, Void.class);
+	}
+
+	private Result<Void> clt_removeSubscriber(String userANDdomain, String sub) {
+		Response r = target.path(userANDdomain).path(sub).request().accept(MediaType.APPLICATION_JSON).delete();
 		return super.toJavaResult(r, Void.class);
 	}
 
@@ -77,8 +101,18 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	}
 
 	@Override
+	public Result<Void> postSubMessage(String userANDdomain, Message msg) {
+		return super.reTry(() -> clt_postSubMessage(userANDdomain, msg));
+	}
+
+	@Override
 	public Result<Void> removeFromPersonalFeed(String userANDdomain, long mid, String pwd) {
 		return super.reTry(() -> clt_removeFromPersonalFeed(userANDdomain, mid, pwd));
+	}
+
+	@Override
+	public Result<Void> removeFeed(String userANDdomain) {
+		return super.reTry(() -> clt_removeFeed(userANDdomain));
 	}
 
 	@Override
@@ -94,6 +128,16 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	@Override
 	public Result<Void> subUser(String userANDdomain, String userSub, String pwd) {
 		return super.reTry(() -> clt_subUser(userANDdomain, userSub, pwd));
+	}
+
+	@Override
+	public Result<Void> addSubscriber(String userANDdomain, String sub) {
+		return super.reTry(() -> clt_addSubscriber(userANDdomain, sub));
+	}
+
+	@Override
+	public Result<Void> removeSubscriber(String userANDdomain, String sub) {
+		return super.reTry(() -> clt_removeSubscriber(userANDdomain, sub));
 	}
 
 	@Override

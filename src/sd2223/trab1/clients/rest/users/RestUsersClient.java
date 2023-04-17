@@ -49,11 +49,18 @@ public class RestUsersClient extends RestClient implements Users {
 	private Result<List<User>> clt_searchUsers(String pattern) {
 		Response r = target.path("/").queryParam(UsersService.QUERY, pattern).request()
 				.accept(MediaType.APPLICATION_JSON).get();
-		return super.toJavaResult(r, new GenericType<List<User>>() {});
+		return super.toJavaResult(r, new GenericType<List<User>>() {
+		});
 	}
 
 	private Result<Void> clt_verifyPassword(String name, String pwd) {
 		Response r = target.path(name).path(UsersService.PWD).queryParam(UsersService.PWD, pwd).request().get();
+		return super.toJavaResult(r, Void.class);
+	}
+
+	// ADICIONADO
+	private Result<Void> clt_checkUser(String name) {
+		Response r = target.path(name).request().get();
 		return super.toJavaResult(r, Void.class);
 	}
 
@@ -71,15 +78,11 @@ public class RestUsersClient extends RestClient implements Users {
 	public Result<Void> verifyPassword(String name, String pwd) {
 		return super.reTry(() -> clt_verifyPassword(name, pwd));
 	}
-	//ADICIONADO POR MANEL
+
+	// ADICIONADO POR MANEL
 	@Override
-	public boolean checkUser(String username) {
-		return super.reTry(() -> clt_checkUser(username)).isOK();
-	}
-	//ADICIONADO POR MANEL
-	private <T> Result<T> clt_checkUser(String username) {
-		Response r = target.path(username).path(UsersService.PWD).request().get();
-		return (Result<T>) super.toJavaResult(r, Void.class);
+	public Result<Void> checkUser(String name) {
+		return super.reTry(() -> clt_checkUser(name));
 	}
 
 	@Override

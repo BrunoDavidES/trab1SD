@@ -7,13 +7,19 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import sd2223.trab1.api.User;
+import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
-import sd2223.trab1.api.java.Result.ErrorCode;;
+import sd2223.trab1.api.java.Result.ErrorCode;
+import sd2223.trab1.clients.FeedsClientFactory;
+import sd2223.trab1.clients.UsersClientFactory;
+import sd2223.trab1.multicast.Domain;;
 
 public class JavaUsers implements Users {
+	private final String domain = Domain.get();
 	private final Map<String, User> users = new HashMap<>();
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
+	private final Feeds feedsClient = FeedsClientFactory.getFeedsClient(domain);
 
 	@Override
 	public Result<String> createUser(User user) {
@@ -84,8 +90,10 @@ public class JavaUsers implements Users {
 	}
 
 	@Override
-	public boolean checkUser(String username) {
-		return users.containsValue(username);
+	public Result<Void> checkUser(String username) {
+		if(!users.containsKey(username))
+			return Result.error(ErrorCode.NOT_FOUND);
+		return Result.ok();
 	}
 
 	@Override
@@ -104,7 +112,7 @@ public class JavaUsers implements Users {
 			Log.info("Password is incorrect.");
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
-		deleteFeed(user);
+		propagateDelete(user);
 		users.remove(name);
 		return Result.ok(user);
 	}
@@ -137,12 +145,13 @@ public class JavaUsers implements Users {
 		return existingUser;
 	}
 
-	private void deleteFeed(User user) {
-
+	private void propagateDelete(User user) {
+		String userANDdomain = createString(user);
+		feedsClient.removeFeed(userANDdomain);
 	}
 
 	private String createString(User user) {
-		return user.getName() + "@" + user.getDomain();
+		return user.getName() + "@" + domain;
 	}
 
 }

@@ -37,9 +37,28 @@ public class SoapFeedsClient extends SoapClient implements Feeds {
 	public Result<Long> postMessage(String userANDdomain, String pwd, Message msg) {
 		return super.reTry( () -> super.toJavaResult( () -> stub().postMessage(userANDdomain, pwd, msg) ) );
 	}
+	
+	@Override
+	public Result<Void> postSubMessage(String userANDdomain, Message msg) {
+		//return super.reTry( () -> super.toJavaResult( () -> stub().postMessage(userANDdomain, pwd, msg) ) );
+		return null;
+	}
+	
+	@Override
+	public Result<Void> addSubscriber(String userANDdomain, String sub) {
+		//return super.reTry( () -> super.toJavaResult( () -> stub().postMessage(userANDdomain, pwd, msg) ) );
+		return null;
+	}
+	
 
 	@Override
 	public Result<Void> removeFromPersonalFeed(String userANDdomain, long mid, String pwd) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Result<Void> removeFeed(String userANDdomain) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -59,6 +78,12 @@ public class SoapFeedsClient extends SoapClient implements Feeds {
 	@Override
 	public Result<Void> subUser(String userANDdomain, String userSub, String pwd) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Result<Void> removeSubscriber(String userANDdomain, String sub) {
+		//return super.reTry( () -> super.toJavaResult( () -> stub().postMessage(userANDdomain, pwd, msg) ) );
 		return null;
 	}
 
