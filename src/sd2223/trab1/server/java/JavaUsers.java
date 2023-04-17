@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Response.Status;
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
@@ -106,6 +103,11 @@ public class JavaUsers implements Users {
 			return Result.ok();
 		else
 			return Result.error(res.error());
+	}
+
+	@Override
+	public boolean checkUser(String username) {
+		return users.containsValue(username);
 	}
 
 	@Override

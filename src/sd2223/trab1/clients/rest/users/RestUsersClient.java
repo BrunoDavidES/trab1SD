@@ -71,6 +71,16 @@ public class RestUsersClient extends RestClient implements Users {
 	public Result<Void> verifyPassword(String name, String pwd) {
 		return super.reTry(() -> clt_verifyPassword(name, pwd));
 	}
+	//ADICIONADO POR MANEL
+	@Override
+	public boolean checkUser(String username) {
+		return super.reTry(() -> clt_checkUser(username)).isOK();
+	}
+	//ADICIONADO POR MANEL
+	private <T> Result<T> clt_checkUser(String username) {
+		Response r = target.path(username).path(UsersService.PWD).request().get();
+		return (Result<T>) super.toJavaResult(r, Void.class);
+	}
 
 	@Override
 	public Result<User> updateUser(String userId, String password, User user) {

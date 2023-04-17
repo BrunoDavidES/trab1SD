@@ -44,7 +44,12 @@ public class SoapUsersClient extends SoapClient implements Users {
 	public Result<Void> verifyPassword(String name, String pwd) {
 		return super.reTry( () -> super.toJavaResult( () -> stub().verifyPassword(name, pwd) ) );
 	}
-	
+
+	@Override
+	public boolean checkUser(String username) {
+		throw new RuntimeException("Not Implemented...");
+	}
+
 	@Override
 	public Result<User> updateUser(String name, String pwd, User user) {
 		throw new RuntimeException("Not Implemented...");

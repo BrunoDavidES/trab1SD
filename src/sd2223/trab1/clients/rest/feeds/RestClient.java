@@ -57,30 +57,24 @@ public class RestClient {
 	}
 
 	protected <T> Result<T> toJavaResult(Response r, Class<T> entityType) {
-		try {
+		try (r) {
 			var status = r.getStatusInfo().toEnum();
 			if (status == Status.OK && r.hasEntity())
 				return ok(r.readEntity(entityType));
-			else 
-				if( status == Status.NO_CONTENT) return ok();
-			
+			else if (status == Status.NO_CONTENT) return ok();
+
 			return error(getErrorCodeFrom(status.getStatusCode()));
-		} finally {
-			r.close();
 		}
 	}
-	
+	//vê se concordas com esta maneira de por os try, não é necessário fazer finally
 	protected <T> Result<T> toJavaResult(Response r, GenericType<T> entityType) {
-		try {
+		try (r) {
 			var status = r.getStatusInfo().toEnum();
 			if (status == Status.OK && r.hasEntity())
 				return ok(r.readEntity(entityType));
-			else 
-				if( status == Status.NO_CONTENT) return ok();
-			
+			else if (status == Status.NO_CONTENT) return ok();
+
 			return error(getErrorCodeFrom(status.getStatusCode()));
-		} finally {
-			r.close();
 		}
 	}
 
