@@ -136,12 +136,10 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		List<User> toList = new ArrayList<User>();
-		Set<String> names = users.keySet();
-		for (String uName : names) {
-			if (uName.contains(pattern)) {
-				User user = users.get(uName);
-				user.setPwd("");
-				toList.add(user);
+		var entries = users.entrySet();
+		for (var e : entries) {
+			if (e.getKey().contains(pattern)) {
+				toList.add(e.getValue().creatClone());
 			}
 		}
 		return Result.ok(toList);
