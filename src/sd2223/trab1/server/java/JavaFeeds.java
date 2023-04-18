@@ -25,7 +25,7 @@ import sd2223.trab1.api.java.Result.ErrorCode;;
 public class JavaFeeds implements Feeds {
 
 	// VER MELHOR
-	private final String domain = Domain.get();
+	private final String domain = Domain.domain;
 	private long messageIdAssigner;
 	private final Map<String, Map<Long, Message>> feeds = new HashMap<String, Map<Long, Message>>();
 	private final Map<String, Map<Long, Message>> subscribedFeeds = new HashMap<String, Map<Long, Message>>();

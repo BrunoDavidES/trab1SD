@@ -17,7 +17,7 @@ import sd2223.trab1.multicast.Domain;;
 
 public class JavaUsers implements Users {
 
-	private final String domain = Domain.get();
+	private final String domain = Domain.domain;
 	private final Map<String, User> users = new HashMap<>();
 	private Feeds feedsClient;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());

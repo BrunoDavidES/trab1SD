@@ -33,7 +33,8 @@ public class RestUsersServer {
 			Domain.set(domain);
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(new RestUsersResource(domain));
+			config.register(new RestUsersResource());
+			Domain.set(domain);
 
 			String ip = InetAddress.getLocalHost().getHostAddress();
 

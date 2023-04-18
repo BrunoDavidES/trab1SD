@@ -23,9 +23,8 @@ public class RestFeedsResource extends RestResource implements FeedsService {
 	final Feeds impl;
 	// int id;
 
-	public RestFeedsResource(String domain, int id) {
+	public RestFeedsResource(int id) {
 		this.impl = new JavaFeeds();
-		Domain.set(domain);
 	}
 
 	@Override

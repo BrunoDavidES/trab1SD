@@ -33,7 +33,4 @@ public class FeedsClientFactory {
 //		return null;
 	}
 	
-	public static String getUsersDomain() {
-		return Domain.get();
-	}
 }

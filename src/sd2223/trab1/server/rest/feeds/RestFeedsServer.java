@@ -9,6 +9,7 @@ import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import sd2223.trab1.multicast.Discovery;
+import sd2223.trab1.multicast.Domain;
 import sd2223.trab1.server.java.JavaUsers;
 
 public class RestFeedsServer {
@@ -32,8 +33,8 @@ public class RestFeedsServer {
 			int id = Integer.parseInt(args[1]);
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(new RestFeedsResource(domain, id));
-
+			config.register(new RestFeedsResource(id));
+			Domain.set(domain);
 			String ip = InetAddress.getLocalHost().getHostAddress();
 
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);

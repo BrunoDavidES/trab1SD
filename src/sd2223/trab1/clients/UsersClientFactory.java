@@ -32,7 +32,4 @@ public class UsersClientFactory {
 //		return null;
 	}
 
-	public static String getUsersDomain() {
-		return Domain.get();
-	}
 }
