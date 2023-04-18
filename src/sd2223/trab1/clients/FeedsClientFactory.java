@@ -27,18 +27,12 @@ public class FeedsClientFactory {
 
 	public static Feeds getFeedsClient(String domain) {
 		Discovery discovery = Discovery.getInstance();
-		String[] domainserviceURIs = discovery.knownUrisOf(domain);
-		String uri = null;
-		for (String serviceURI : domainserviceURIs) {
-			if (serviceURI.contains("feeds")) {
-				String[] splitted = serviceURI.split(" ");
-				uri = splitted[1];
-			}
-		}
-		Feeds domainFeedClient = FeedsClientFactory.get(URI.create(uri));
-		return domainFeedClient;
+		URI[] domainserviceURI = discovery.knownUrisOf(domain+":feeds", 1);
+		var domainFeedsClient = get(domainserviceURI[0]);
+		return domainFeedsClient;
+//		return null;
 	}
-
+	
 	public static String getUsersDomain() {
 		return Domain.get();
 	}

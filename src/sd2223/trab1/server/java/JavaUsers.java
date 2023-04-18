@@ -16,10 +16,11 @@ import sd2223.trab1.clients.UsersClientFactory;
 import sd2223.trab1.multicast.Domain;;
 
 public class JavaUsers implements Users {
+
 	private final String domain = Domain.get();
 	private final Map<String, User> users = new HashMap<>();
+	private Feeds feedsClient;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
-	private final Feeds feedsClient = FeedsClientFactory.getFeedsClient(domain);
 
 	@Override
 	public Result<String> createUser(User user) {
@@ -44,14 +45,9 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		var user = users.get(name);
-		if (user == null) {
-			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
-		}
-		if (!user.getPwd().equals(pwd)) {
-			Log.info("Password is incorrect.");
-			return Result.error(ErrorCode.FORBIDDEN);
-		}
+		var r = validation(name, pwd, user);
+		if (!r.isOK())
+			return Result.error(r.error());
 		return Result.ok(user);
 	}
 
@@ -67,14 +63,9 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		var existingUser = users.get(name);
-		if (existingUser == null) {
-			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
-		}
-		if (!existingUser.getPwd().equals(pwd)) {
-			Log.info("Password is incorrect.");
-			return Result.error(ErrorCode.FORBIDDEN);
-		}
+		var r = validation(name, pwd, existingUser);
+		if (!r.isOK())
+			return Result.error(r.error());
 		existingUser = modifyUser(existingUser, user);
 		users.put(name, existingUser);
 		return Result.ok(existingUser);
@@ -91,7 +82,7 @@ public class JavaUsers implements Users {
 
 	@Override
 	public Result<Void> checkUser(String username) {
-		if(!users.containsKey(username))
+		if (!users.containsKey(username))
 			return Result.error(ErrorCode.NOT_FOUND);
 		return Result.ok();
 	}
@@ -104,14 +95,9 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		var user = users.get(name);
-		if (user == null) {
-			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
-		}
-		if (!user.getPwd().equals(pwd)) {
-			Log.info("Password is incorrect.");
-			return Result.error(ErrorCode.FORBIDDEN);
-		}
+		var r = validation(name, pwd, user);
+		if (!r.isOK())
+			return Result.error(r.error());
 		propagateDelete(user);
 		users.remove(name);
 		return Result.ok(user);
@@ -147,11 +133,23 @@ public class JavaUsers implements Users {
 
 	private void propagateDelete(User user) {
 		String userANDdomain = createString(user);
-		feedsClient.removeFeed(userANDdomain);
+		//feedsClient.removeFeed(userANDdomain);
 	}
 
 	private String createString(User user) {
 		return user.getName() + "@" + domain;
+	}
+
+	private Result<Void> validation(String name, String pwd, User user) {
+		if (user == null) {
+			Log.info("User does not exist.");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
+		if (!user.getPwd().equals(pwd)) {
+			Log.info("Password is incorrect.");
+			return Result.error(ErrorCode.FORBIDDEN);
+		}
+		return Result.ok();
 	}
 
 }

@@ -1,6 +1,7 @@
 package sd2223.trab1.server.rest.feeds;
 
 import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.util.logging.Logger;
 
@@ -31,22 +32,27 @@ public class RestFeedsServer {
 			int id = Integer.parseInt(args[1]);
 
 			ResourceConfig config = new ResourceConfig();
-			config.register(new RestFeedsResource(domain,id));
-			
+			config.register(new RestFeedsResource(domain, id));
+
 			String ip = InetAddress.getLocalHost().getHostAddress();
 
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
 			JdkHttpServerFactory.createHttpServer(URI.create(serverURI), config);
-
-			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 			
+			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
+
+			System.out.println("REACHED INSTANCE");
+//			String toAnnounce = String.format(MESSAGE, domain, "feeds", serverURI);
 			Discovery announcement = Discovery.getInstance();
-			String announceMessage = String.format(MESSAGE, domain, "feeds", serverURI);
-			announcement.announce(domain, announceMessage);
+			System.out.println("REACHED ANNOUNCEMENT");
+			announcement.announce(domain+":users", serverURI);
+			System.out.println("ANNOUNCED");
 
 			// More code can be executed here...
 		} catch (Exception e) {
 			Log.severe(e.getMessage());
 		}
+
 	}
+
 }

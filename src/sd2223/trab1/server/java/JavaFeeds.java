@@ -31,7 +31,7 @@ public class JavaFeeds implements Feeds {
 	private final Map<String, Map<Long, Message>> subscribedFeeds = new HashMap<String, Map<Long, Message>>();
 	private final Map<String, List<String>> subscribers = new HashMap<String, List<String>>();
 	private static Logger Log = Logger.getLogger(JavaFeeds.class.getName());
-	private final Users usersClient = UsersClientFactory.getUsersClient(domain);
+	private Users usersClient;
 
 	@Override
 	public Result<Long> postMessage(String userANDdomain, String pwd, Message msg) {
@@ -44,6 +44,8 @@ public class JavaFeeds implements Feeds {
 //			return Result.error(ErrorCode.NOT_FOUND);
 //		}
 		String username = userANDdomain.split("@")[0];
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(domain);
 		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
@@ -102,6 +104,8 @@ public class JavaFeeds implements Feeds {
 //			return Result.error(ErrorCode.NOT_FOUND);
 //		}
 		String username = userANDdomain.split("@")[0];
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(domain);
 		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
@@ -119,7 +123,7 @@ public class JavaFeeds implements Feeds {
 		// propagateDelete()
 		return Result.ok();
 	}
-	
+
 	@Override
 	public Result<Void> removeFeed(String userANDdomain) {
 		if (userANDdomain == null) {
@@ -146,6 +150,8 @@ public class JavaFeeds implements Feeds {
 //			return Result.error(ErrorCode.NOT_FOUND);
 //		}
 		String username = userANDdomain.split("@")[0];
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(domain);
 		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
@@ -186,6 +192,8 @@ public class JavaFeeds implements Feeds {
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
 		String username = userANDdomain.split("@")[0];
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(domain);
 		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
@@ -220,6 +228,8 @@ public class JavaFeeds implements Feeds {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		String username = userANDdomain.split("@")[0];
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(domain);
 		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
@@ -269,6 +279,8 @@ public class JavaFeeds implements Feeds {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		String username = userANDdomain.split("@")[0];
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(domain);
 		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
@@ -314,6 +326,8 @@ public class JavaFeeds implements Feeds {
 //				throw new WebApplicationException(Status.NOT_FOUND);
 //			}
 		String username = userANDdomain.split("@")[0];
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(domain);
 		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");

@@ -42,9 +42,13 @@ public class RestUsersServer {
 
 			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 
+			System.out.println("REACHED INSTANCE");
+//			String toAnnounce = String.format(MESSAGE, domain, "users", serverURI);
+//			Log.info(toAnnounce);
 			Discovery announcement = Discovery.getInstance();
-			String announceMessage = String.format(MESSAGE, domain, "users", serverURI);
-			announcement.announce(domain, announceMessage);
+			System.out.println("REACHED ANNOUNCEMENT");
+			announcement.announce(domain+":users", serverURI);
+			System.out.println("ANNOUNCED");
 
 			// More code can be executed here...
 		} catch (Exception e) {

@@ -23,21 +23,15 @@ public class UsersClientFactory {
 		else
 			throw new RuntimeException("Unknown service type..." + uriString);
 	}
-	
+
 	public static Users getUsersClient(String domain) {
 		Discovery discovery = Discovery.getInstance();
-		String[] domainserviceURIs = discovery.knownUrisOf(domain);
-		String uri = null;
-		for(String serviceURI: domainserviceURIs) {
-			if(serviceURI.contains("users")) {
-				String[] splitted = serviceURI.split(" ");
-				uri = splitted[1];
-			}
-		}
-		Users domainUsersClient = UsersClientFactory.get(URI.create(uri));	
+		URI[] domainserviceURI = discovery.knownUrisOf(domain+":users", 1);
+		var domainUsersClient = get(domainserviceURI[0]);
 		return domainUsersClient;
+//		return null;
 	}
-	
+
 	public static String getUsersDomain() {
 		return Domain.get();
 	}

@@ -34,7 +34,7 @@ public interface Discovery {
 	 * @param serviceName - the name of the service
 	 * @param serviceURI  - the uri of the service
 	 */
-	public void announce(String domain, String servicedomainURI);
+	public void announce(String serviceName, String serviceURI);
 
 	/**
 	 * Get discovered URIs for a given service name
@@ -44,7 +44,7 @@ public interface Discovery {
 	 *                    number is satisfied.
 	 * @return array with the discovered URIs for the given service name.
 	 */
-	public String[] knownUrisOf(String domain);
+	public URI[] knownUrisOf(String serviceName, int minReplies);
 
 	/**
 	 * Get the instance of the Discovery service
@@ -79,7 +79,7 @@ class DiscoveryImpl implements Discovery {
 	private static Discovery singleton;
 
 	// ADICIONADO
-	private Map<String, List<String>> knownURIs = new ConcurrentHashMap<String, List<String>>();
+	private Map<String, Collection<URI>> knownURIs = new HashMap<String, Collection<URI>>();
 
 	synchronized static Discovery getInstance() {
 		if (singleton == null) {
@@ -120,17 +120,17 @@ class DiscoveryImpl implements Discovery {
 
 	@Override
 	// ADICIONADO
-	public String[] knownUrisOf(String domain) {
-		List<String> uris = knownURIs.get(domain);
+	public URI[] knownUrisOf(String serviceName, int minEntries) {
+		Collection<URI> uris = knownURIs.get(serviceName);
 		while(uris == null) {
 			try {
-				Thread.sleep(DISCOVERY_RETRY_TIMEOUT);
+				Thread.sleep(DISCOVERY_ANNOUNCE_PERIOD);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			uris = knownURIs.get(domain);
+			uris = knownURIs.get(serviceName);
 		}
-		return  uris.toArray(new String[uris.size()]);
+		return  uris.toArray(new URI[uris.size()]);
 	}
 
 	private void startListener() {
@@ -151,7 +151,8 @@ class DiscoveryImpl implements Discovery {
 						var parts = msg.split(DELIMITER);
 						if (parts.length == 2) {
 							var serviceName = parts[0];
-							var uri = parts[1];
+							var uri = URI.create(parts[1]);
+							System.out.println("REACHED");
 							// ADICIONADO
 							store(serviceName, uri);
 						}
@@ -166,16 +167,15 @@ class DiscoveryImpl implements Discovery {
 	}
 
 	// ADICIONADO
-	private void store(String domain, String message) {
-		List<String> serviceURIs = knownURIs.get(domain);
+	private void store(String serviceName, URI uri) {
+		Collection<URI> serviceURIs = knownURIs.get(serviceName);
 		if (serviceURIs == null) {
-			serviceURIs = new ArrayList<String>();
-			serviceURIs.add(message);
-			knownURIs.put(domain, serviceURIs);
+			serviceURIs = new ArrayList<URI>();
+			serviceURIs.add(uri);
+			knownURIs.put(serviceName, serviceURIs);
 		} else {
-			serviceURIs.add(message);
-			//ver se está a mais
-			knownURIs.put(domain, serviceURIs);
+			serviceURIs.add(uri);
+			knownURIs.put(serviceName, serviceURIs);
 		}
 	}
 
