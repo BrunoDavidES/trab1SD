@@ -3,7 +3,9 @@ package sd2223.trab1.clients.rest.users;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import jakarta.inject.Singleton;
 import sd2223.trab1.api.User;
 import sd2223.trab1.api.java.Result;
 import sd2223.trab1.api.java.Users;
@@ -13,7 +15,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.GenericType;
-
+@Singleton
 public class RestUsersClient extends RestClient implements Users {
 
 	final WebTarget target;

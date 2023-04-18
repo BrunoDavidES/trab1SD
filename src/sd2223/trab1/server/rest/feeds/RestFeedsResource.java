@@ -79,6 +79,7 @@ public class RestFeedsResource extends RestResource implements FeedsService {
 
 	@Override
 	public List<String> listSubs(String user) {
+
 		return super.fromJavaResult(impl.listSubs(user));
 	}
 

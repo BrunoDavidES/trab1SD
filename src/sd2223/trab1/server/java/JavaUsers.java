@@ -17,7 +17,7 @@ import sd2223.trab1.multicast.Domain;;
 
 public class JavaUsers implements Users {
 
-	private final String domain = Domain.domain;
+	//private final String domain = Domain.domain;
 	private final Map<String, User> users = new HashMap<>();
 	private Feeds feedsClient;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
@@ -82,8 +82,11 @@ public class JavaUsers implements Users {
 
 	@Override
 	public Result<Void> checkUser(String username) {
-		if (!users.containsKey(username))
+		Log.warning("User to check: " + username + " " + users.containsKey(username) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		if (!users.containsKey(username)) {
+
 			return Result.error(ErrorCode.NOT_FOUND);
+		}
 		return Result.ok();
 	}
 
@@ -137,7 +140,8 @@ public class JavaUsers implements Users {
 	}
 
 	private String createString(User user) {
-		return user.getName() + "@" + domain;
+
+		return user.getName() + "@" + Domain.domain;
 	}
 
 	private Result<Void> validation(String name, String pwd, User user) {

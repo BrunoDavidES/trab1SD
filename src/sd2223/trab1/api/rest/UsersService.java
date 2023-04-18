@@ -56,7 +56,7 @@ public interface UsersService {
 
 	// ADICIONADO
 	@GET
-	@Path("/check/{" + NAME + "}/")
+	@Path(CHECK + "/{" + NAME + "}")
 	void checkUser(@PathParam(NAME) String name);
 
 	/**
