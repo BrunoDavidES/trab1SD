@@ -45,7 +45,7 @@ public class RestFeedsServer {
 //			String toAnnounce = String.format(MESSAGE, domain, "feeds", serverURI);
 			Discovery announcement = Discovery.getInstance();
 			System.out.println("REACHED ANNOUNCEMENT");
-			announcement.announce(domain+":users", serverURI);
+			announcement.announce(domain+":feeds", serverURI);
 			System.out.println("ANNOUNCED");
 
 			// More code can be executed here...

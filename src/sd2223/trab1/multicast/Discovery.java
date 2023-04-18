@@ -107,6 +107,7 @@ class DiscoveryImpl implements Discovery {
 				while (true) {
 					try {
 						ds.send(pkt);
+						System.out.println("Send:" + String.format("%s%s%s", serviceName, DELIMITER, serviceURI));
 						Thread.sleep(DISCOVERY_ANNOUNCE_PERIOD);
 					} catch (Exception e) {
 						e.printStackTrace();
