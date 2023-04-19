@@ -187,7 +187,7 @@ public class JavaFeeds implements Feeds {
 		}
 	}
 
-	@Override // FALTAM CENAS
+	@Override // FALTAM CENAS teste
 	// (--- causa do erro na 3b, 3c, 3e na parte de ir buscar feeds dos que ele
 	// subscreve
 	// --- e a 3d é porque quando o user é apagado, o feeds ainda o tem com os feeds
