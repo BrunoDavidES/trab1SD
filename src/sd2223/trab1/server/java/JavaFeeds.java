@@ -210,11 +210,11 @@ public class JavaFeeds implements Feeds {
 			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
+		List<Message> toList = new ArrayList<Message>();
 		if (!feeds.containsKey(userANDdomain)) {
 			Log.info("Feed for this user does not exist yet.");
-			return Result.error(ErrorCode.NOT_FOUND);
+			return Result.ok(toList);
 		}
-		List<Message> toList = new ArrayList<Message>();
 		Collection<Message> messages = feeds.get(userANDdomain).values();
 		if (messages != null) {
 			Iterator<Message> it = messages.iterator();
@@ -267,9 +267,8 @@ public class JavaFeeds implements Feeds {
 			List<String> subs = new ArrayList<String>();
 			subs.add(userSub);
 			subscribed.put(userANDdomain, subs);
-		}
-		else {
-		subscribed.get(userANDdomain).add(userSub);
+		} else {
+			subscribed.get(userANDdomain).add(userSub);
 		}
 		FeedsClientFactory.getFeedsClient(userSubDomain).addSubscriber(userSub, userANDdomain);
 		return Result.ok();
@@ -321,7 +320,11 @@ public class JavaFeeds implements Feeds {
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
 		subscribed.get(userANDdomain).remove(userSub);
-		FeedsClientFactory.getFeedsClient(userSubDomain).removeSubscriber(userSubName, userANDdomain);
+		if(userSubDomain.equals(Domain.domain)) {
+			subscribers.get(userANDdomain).remove(userSub);
+		}
+		else
+			FeedsClientFactory.getFeedsClient(userSubDomain).removeSubscriber(userSubName, userANDdomain);
 		return Result.ok();
 	}
 
@@ -366,7 +369,11 @@ public class JavaFeeds implements Feeds {
 		if (userSubs != null) {
 			for (var sub : userSubs) {
 				String domain = sub.split("@")[1];
-				FeedsClientFactory.getFeedsClient(domain).postSubMessage(sub, message);
+				if(domain.equals(Domain.domain)) {
+					subscribedFeeds.get(sub).put(message.getId(), message);
+				}
+				else
+					FeedsClientFactory.getFeedsClient(domain).postSubMessage(sub, message);
 			}
 		}
 	}
@@ -376,6 +383,10 @@ public class JavaFeeds implements Feeds {
 		if (userSubs != null) {
 			for (var sub : userSubs) {
 				String domain = sub.split("@")[1];
+				if(domain.equals(Domain.domain)) {
+					subscribedFeeds.get(sub).remove(message.getId());
+				}
+				else
 				FeedsClientFactory.getFeedsClient(domain).removeFromSubscribedFeed(sub, message);
 			}
 		}
