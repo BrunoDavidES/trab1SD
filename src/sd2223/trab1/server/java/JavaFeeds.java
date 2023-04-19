@@ -39,7 +39,8 @@ public class JavaFeeds implements Feeds {
 	// parece-me que no segundo caso, antes do utilizador estar errado, está a fazer
 	// post num servidor que não é desse domínio
 	public Result<Long> postMessage(String userANDdomain, String pwd, Message msg) {
-		if (userANDdomain == null || pwd == null || msg == null) {
+		String userDomain = userANDdomain.split("@")[1];
+		if (userANDdomain == null || pwd == null || msg == null || !Domain.domain.equals(userDomain)) {
 			Log.info("There's information missing!");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
@@ -164,14 +165,12 @@ public class JavaFeeds implements Feeds {
 			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
-		Map<Long, Message> personalMessages = feeds.get(userANDdomain);
-		if (personalMessages == null) {
-			Map<Long, Message> subscribedMessages = subscribedFeeds.get(userANDdomain);
-			if (subscribedMessages == null) {
+		if (feeds.get(userANDdomain) == null || !feeds.get(userANDdomain).containsKey(mid)) {
+			if (subscribedFeeds.get(userANDdomain) == null || !subscribedFeeds.get(userANDdomain).containsKey(mid)) {
 				Log.info("Message not found");
 				return Result.error(ErrorCode.NOT_FOUND);
 			} else {
-				Message message = subscribedMessages.get(mid);
+				Message message = subscribedFeeds.get(userANDdomain).get(mid);
 				if (message == null) {
 					Log.info("Message not found");
 					return Result.error(ErrorCode.NOT_FOUND);
@@ -179,7 +178,7 @@ public class JavaFeeds implements Feeds {
 				return Result.ok(message);
 			}
 		} else {
-			Message message = personalMessages.get(mid);
+			Message message = feeds.get(userANDdomain).get(mid);
 			if (message == null) {
 				Log.info("Message not found");
 				return Result.error(ErrorCode.NOT_FOUND);
@@ -210,11 +209,12 @@ public class JavaFeeds implements Feeds {
 			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
+		List<Message> toList = new ArrayList<Message>();
 		if (!feeds.containsKey(userANDdomain)) {
 			Log.info("Feed for this user does not exist yet.");
-			return Result.error(ErrorCode.NOT_FOUND);
+			return Result.ok(toList);
 		}
-		List<Message> toList = new ArrayList<Message>();
+
 		Collection<Message> messages = feeds.get(userANDdomain).values();
 		if (messages != null) {
 			Iterator<Message> it = messages.iterator();
