@@ -22,6 +22,7 @@ public class JavaUsers implements Users {
 	private Feeds feedsClient;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
 
+
 	@Override
 	public Result<String> createUser(User user) {
 		Log.info("createUser : " + user);
@@ -103,6 +104,9 @@ public class JavaUsers implements Users {
 			return Result.error(r.error());
 		propagateDelete(user);
 		users.remove(name);
+		if (feedsClient == null)
+			feedsClient = FeedsClientFactory.getFeedsClient(Domain.domain);
+		feedsClient.removeFeed(name+"@"+Domain.domain);
 		return Result.ok(user);
 	}
 
