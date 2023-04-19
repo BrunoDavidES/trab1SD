@@ -40,7 +40,7 @@ public class JavaFeeds implements Feeds {
 	// post num servidor que não é desse domínio
 	public Result<Long> postMessage(String userANDdomain, String pwd, Message msg) {
 		String userDomain = userANDdomain.split("@")[1];
-		if (userANDdomain == null || pwd == null || msg == null || !Domain.domain.equals(userDomain)) {
+		if (userANDdomain == null || pwd == null || msg == null || !Domain.domain.equals(userDomain)){
 			Log.info("There's information missing!");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
