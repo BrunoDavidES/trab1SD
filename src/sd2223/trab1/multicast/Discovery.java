@@ -169,15 +169,15 @@ class DiscoveryImpl implements Discovery {
 
 	// ADICIONADO
 	private void store(String serviceName, URI uri) {
-		Collection<URI> serviceURIs = knownURIs.get(serviceName);
-		if (serviceURIs == null) {
-			serviceURIs = new ArrayList<URI>();
-			serviceURIs.add(uri);
-			knownURIs.put(serviceName, serviceURIs);
-		} else {
-			serviceURIs.add(uri);
-			knownURIs.put(serviceName, serviceURIs);
-		}
+			Collection<URI> serviceURIs = knownURIs.get(serviceName);
+			if (serviceURIs == null) {
+				serviceURIs = new ArrayList<URI>();
+				serviceURIs.add(uri);
+				knownURIs.put(serviceName, serviceURIs);
+			} else {
+				serviceURIs.add(uri);
+				knownURIs.put(serviceName, serviceURIs);
+			}
 	}
 
 }
