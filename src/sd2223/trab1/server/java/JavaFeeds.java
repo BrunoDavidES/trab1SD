@@ -25,7 +25,6 @@ import sd2223.trab1.api.java.Result.ErrorCode;;
 public class JavaFeeds implements Feeds {
 
 	// VER MELHOR
-	//private final String domain = Domain.domain;
 	private long messageIdAssigner = 0;
 	private final Map<String, Map<Long, Message>> feeds = new HashMap<String, Map<Long, Message>>();
 	private final Map<String, Map<Long, Message>> subscribedFeeds = new HashMap<String, Map<Long, Message>>();
@@ -33,41 +32,31 @@ public class JavaFeeds implements Feeds {
 	private final Map<String, List<String>> subscribed = new HashMap<String, List<String>>();
 	private static Logger Log = Logger.getLogger(JavaFeeds.class.getName());
 	private Users usersClient;
-	private Feeds feedsClient;
 
 	@Override
-	//está a dar 404, mas ele quer 400, ou seja ele quer o erro otherwise, mas está a dar o erro user not found, segundo uma pergunta feita ao prof:
-	// parece-me que no segundo caso, antes do utilizador estar errado, está a fazer post num servidor que não é desse domínio
+	// está a dar 404, mas ele quer 400, ou seja ele quer o erro otherwise, mas está
+	// a dar o erro user not found, segundo uma pergunta feita ao prof:
+	// parece-me que no segundo caso, antes do utilizador estar errado, está a fazer
+	// post num servidor que não é desse domínio
 	public Result<Long> postMessage(String userANDdomain, String pwd, Message msg) {
 		if (userANDdomain == null || pwd == null || msg == null) {
 			Log.info("There's information missing!");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
-//		if (!userANDdomain.contains(domain)) {
-//			Log.info("Not the user's domain");
-//			return Result.error(ErrorCode.NOT_FOUND);
-//		}
 		String username = userANDdomain.split("@")[0];
-		Log.info("DOMAIN: " + Domain.domain);
 		if (usersClient == null)
 			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
-	/*	var response = usersClient.checkUser(username);
+		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
-		}*/
-		if (!feeds.containsKey(username) && !msg.getUser().equals(username)) {
-			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
 		}
-
-
-		var response = usersClient.verifyPassword(username, pwd);
+		response = usersClient.verifyPassword(username, pwd);
 		if (!response.isOK()) {
 			Log.info("The password is incorrect");
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
-		this.messageIdAssigner+=1;
+		this.messageIdAssigner++;
 		Message message = new Message(messageIdAssigner, username, msg.getDomain(), msg.getText());
 		if (!feeds.containsKey(userANDdomain)) {
 			Map<Long, Message> messages = new HashMap<Long, Message>();
@@ -84,8 +73,8 @@ public class JavaFeeds implements Feeds {
 
 	@Override
 	public Result<Void> postSubMessage(String userANDdomain, Message msg) {
-		if (msg == null || Domain.domain == null) {
-			Log.info("A null message or domain identifier was received");
+		if (userANDdomain == null || msg == null) {
+			Log.info("A null username or message was received");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		if (!userANDdomain.contains(Domain.domain)) {
@@ -110,28 +99,39 @@ public class JavaFeeds implements Feeds {
 			Log.info("Null information was given");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
-//		if (!userANDdomain.contains(domain)) {
-//			Log.info("Not the user's domain");
-//			return Result.error(ErrorCode.NOT_FOUND);
-//		}
 		String username = userANDdomain.split("@")[0];
 		if (usersClient == null)
 			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
-		/*var response = usersClient.checkUser(username);
+		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
-		}*/
-		var response = usersClient.verifyPassword(username, pwd);
+		}
+		response = usersClient.verifyPassword(username, pwd);
 		if (!response.isOK()) {
 			Log.info("The password is incorrect");
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
+		var msg = feeds.get(userANDdomain).get(mid);
 		if (feeds.get(userANDdomain).remove(mid) == null) {
 			Log.info("The message with the given ID does not exist");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
-		// propagateDelete()
+		propagateDelete(username, msg);
+		return Result.ok();
+	}
+
+	@Override
+	public Result<Void> removeFromSubscribedFeed(String userANDdomain, Message msg) {
+		if (userANDdomain == null || msg == null) {
+			Log.info("A null username or message was received");
+			return Result.error(ErrorCode.BAD_REQUEST);
+		}
+		if (!userANDdomain.contains(Domain.domain)) {
+			Log.info("This is not the right domain");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
+		subscribedFeeds.get(userANDdomain).remove(msg.getId());
 		return Result.ok();
 	}
 
@@ -156,19 +156,14 @@ public class JavaFeeds implements Feeds {
 			Log.info("Null information was given");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
-
-//		if (!userANDdomain.contains(domain)) {
-//			Log.info("Not the user's domain");
-//			return Result.error(ErrorCode.NOT_FOUND);
-//		}
 		String username = userANDdomain.split("@")[0];
 		if (usersClient == null)
 			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
-		/*var response = usersClient.checkUser(username);
+		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
-		}*/
+		}
 		Map<Long, Message> personalMessages = feeds.get(userANDdomain);
 		if (personalMessages == null) {
 			Map<Long, Message> subscribedMessages = subscribedFeeds.get(userANDdomain);
@@ -193,8 +188,9 @@ public class JavaFeeds implements Feeds {
 		}
 	}
 
-	@Override //FALTAM CENAS
-	// (--- causa do erro na 3b, 3c, 3e na parte de ir buscar feeds dos que ele subscreve
+	@Override // FALTAM CENAS
+	// (--- causa do erro na 3b, 3c, 3e na parte de ir buscar feeds dos que ele
+	// subscreve
 	// --- e a 3d é porque quando o user é apagado, o feeds ainda o tem com os feeds
 	// --- no 3f ele não consegue ir buscar a feeds noutros domains)
 	public Result<List<Message>> getMessages(String userANDdomain, long time) {
@@ -209,23 +205,17 @@ public class JavaFeeds implements Feeds {
 		String username = userANDdomain.split("@")[0];
 		if (usersClient == null)
 			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
-
-		if (!feeds.containsKey(userANDdomain)) {
+		var response = usersClient.checkUser(username);
+		if (!response.isOK()) {
 			Log.info("User does not exist.");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
+		if (!feeds.containsKey(userANDdomain)) {
+			Log.info("Feed for this user does not exist yet.");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
 		List<Message> toList = new ArrayList<Message>();
 		Collection<Message> messages = feeds.get(userANDdomain).values();
-		/*if(time == -1) {
-			if (messages != null) {
-				Iterator<Message> it = messages.iterator();
-				while (it.hasNext()) {
-					Message itMessage = it.next();
-					//if (itMessage.getCreationTime() > time || time == 0)
-						toList.add(itMessage);
-				}
-			}
-		}else*/
 		if (messages != null) {
 			Iterator<Message> it = messages.iterator();
 			while (it.hasNext()) {
@@ -234,37 +224,19 @@ public class JavaFeeds implements Feeds {
 					toList.add(itMessage);
 			}
 		}
-		if (!subscribedFeeds.containsKey(userANDdomain)) {
-			Map<Long, Message> m = new HashMap<Long, Message>();
-			subscribedFeeds.put(userANDdomain, m);
-		}
-		if(subscribed.containsKey(userANDdomain)) {
-			for (String sub : subscribed.get(userANDdomain)) {
-				String userSubName = sub.split("@")[0];
-				String feedsSubDomain = sub.split("@")[1];
-
-				Feeds feedsSubClient = FeedsClientFactory.getFeedsClient(feedsSubDomain);
-
-				if(feedsSubClient.getMessages(sub, -1).isOK()) { //DÁ ERRO AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-					Iterator<Message> it = feedsSubClient.getMessages(sub, -1).value().iterator();
-					while (it.hasNext()) {
-						Message itMessage = it.next();
-						if (itMessage.getCreationTime() > time)
-							subscribedFeeds.get(userANDdomain).put(itMessage.getId(), itMessage);
-					}
+		if (subscribedFeeds.containsKey(userANDdomain)) {
+			messages = subscribedFeeds.get(userANDdomain).values();
+			if (messages != null) {
+				Iterator<Message> it = messages.iterator();
+				while (it.hasNext()) {
+					Message itMessage = it.next();
+					if (itMessage.getCreationTime() > time || time == 0)
+						toList.add(itMessage);
 				}
-
-			}
-
-			Iterator<Message> it = subscribedFeeds.get(userANDdomain).values().iterator();
-			while (it.hasNext()) {
-				Message itMessage = it.next();
-				if (itMessage.getCreationTime() > time)
-					toList.add(itMessage);
 			}
 		}
-
 		return Result.ok(toList);
+
 	}
 
 	@Override
@@ -274,25 +246,32 @@ public class JavaFeeds implements Feeds {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		String username = userANDdomain.split("@")[0];
-		if (usersClient == null)
-			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
-
 		String userSubName = userSub.split("@")[0];
 		String userSubDomain = userSub.split("@")[1];
-
-
-		var response = usersClient.verifyPassword(username, pwd);
-		if (!response.isOK()) {
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
+		var response1 = usersClient.checkUser(username);
+		usersClient = UsersClientFactory.getUsersClient(userSubDomain);
+		var response2 = usersClient.checkUser(userSubName);
+		if (!response1.isOK() || !response2.isOK()) {
+			Log.info("One of the users does not exist");
+			return Result.error(ErrorCode.NOT_FOUND);
+		}
+		usersClient = UsersClientFactory.getUsersClient(Domain.domain);
+		response1 = usersClient.verifyPassword(username, pwd);
+		if (!response1.isOK()) {
 			Log.info("The password is incorrect");
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
-		FeedsClientFactory.getFeedsClient(userSubDomain).addSubscriber(userSub, userANDdomain);
 		if (!subscribed.containsKey(userANDdomain)) {
-			List<String> toList = new ArrayList<String>();
-			subscribed.put(userANDdomain, toList);
+			List<String> subs = new ArrayList<String>();
+			subs.add(userSub);
+			subscribed.put(userANDdomain, subs);
 		}
+		else {
 		subscribed.get(userANDdomain).add(userSub);
-
+		}
+		FeedsClientFactory.getFeedsClient(userSubDomain).addSubscriber(userSub, userANDdomain);
 		return Result.ok();
 	}
 
@@ -324,25 +303,24 @@ public class JavaFeeds implements Feeds {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		String username = userANDdomain.split("@")[0];
-		if (usersClient == null)
-			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
-		/*var response = usersClient.checkUser(username);
-		if (!response.isOK()) {
-			Log.info("User does not exist.");
-			return Result.error(ErrorCode.NOT_FOUND);
-		}*/
 		String userSubName = userSub.split("@")[0];
 		String userSubDomain = userSub.split("@")[1];
-		/*response = UsersClientFactory.getUsersClient(userSubDomain).checkUser(userSubName);
-		if (!response.isOK()) {
-			Log.info("User to sub does not exist.");
+		if (usersClient == null)
+			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
+		var response1 = usersClient.checkUser(username);
+		usersClient = UsersClientFactory.getUsersClient(userSubDomain);
+		var response2 = usersClient.checkUser(userSubName);
+		if (!response1.isOK() || !response2.isOK()) {
+			Log.info("One of the users does not exist");
 			return Result.error(ErrorCode.NOT_FOUND);
-		}*/
-		var response = usersClient.verifyPassword(username, pwd);
-		if (!response.isOK()) {
+		}
+		usersClient = UsersClientFactory.getUsersClient(Domain.domain);
+		response1 = usersClient.verifyPassword(username, pwd);
+		if (!response1.isOK()) {
 			Log.info("The password is incorrect");
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
+		subscribed.get(userANDdomain).remove(userSub);
 		FeedsClientFactory.getFeedsClient(userSubDomain).removeSubscriber(userSubName, userANDdomain);
 		return Result.ok();
 	}
@@ -366,21 +344,17 @@ public class JavaFeeds implements Feeds {
 			Log.info("There's information missing!");
 			throw new WebApplicationException(Status.BAD_REQUEST);
 		}
-//			if (!userANDdomain.contains(domain)) {
-//				Log.info("Not the user's domain");
-//				throw new WebApplicationException(Status.NOT_FOUND);
-//			}
 		String username = userANDdomain.split("@")[0];
 		if (usersClient == null)
 			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
-		/*var response = usersClient.checkUser(username);
+		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
-		}*/
+		}
 		List<String> toList = new ArrayList<String>();
 		if (!subscribed.containsKey(userANDdomain)) {
-			Log.info("SUBS LIST IS EMPTY");
+			Log.info("The user does not subscribe anyone");
 			return Result.ok(toList);
 		}
 		toList = subscribed.get(userANDdomain);
@@ -393,6 +367,16 @@ public class JavaFeeds implements Feeds {
 			for (var sub : userSubs) {
 				String domain = sub.split("@")[1];
 				FeedsClientFactory.getFeedsClient(domain).postSubMessage(sub, message);
+			}
+		}
+	}
+
+	private void propagateDelete(String userANDdomain, Message message) {
+		List<String> userSubs = subscribers.get(userANDdomain);
+		if (userSubs != null) {
+			for (var sub : userSubs) {
+				String domain = sub.split("@")[1];
+				FeedsClientFactory.getFeedsClient(domain).removeFromSubscribedFeed(sub, message);
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.GenericType;
+
 @Singleton
 public class RestUsersClient extends RestClient implements Users {
 
@@ -62,7 +63,7 @@ public class RestUsersClient extends RestClient implements Users {
 
 	// ADICIONADO
 	private Result<Void> clt_checkUser(String name) {
-		Response r = target.path(name).request().get();
+		Response r = target.path(UsersService.CHECK).path(name).request().get();
 		return super.toJavaResult(r, Void.class);
 	}
 

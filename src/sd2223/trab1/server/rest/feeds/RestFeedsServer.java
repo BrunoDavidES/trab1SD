@@ -34,7 +34,8 @@ public class RestFeedsServer {
 
 			ResourceConfig config = new ResourceConfig();
 			config.register(new RestFeedsResource(id));
-			Domain.set(domain);
+			Domain.setDomain(domain);
+			Domain.setID(id);
 			String ip = InetAddress.getLocalHost().getHostAddress();
 
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);

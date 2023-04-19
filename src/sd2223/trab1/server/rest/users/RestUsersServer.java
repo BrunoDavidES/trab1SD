@@ -30,11 +30,11 @@ public class RestUsersServer {
 
 			String domain = args[0];
 			
-			Domain.set(domain);
+			Domain.setDomain(domain);
 
 			ResourceConfig config = new ResourceConfig();
 			config.register(new RestUsersResource());
-			Domain.set(domain);
+			Domain.setDomain(domain);
 
 			String ip = InetAddress.getLocalHost().getHostAddress();
 

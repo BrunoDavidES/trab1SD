@@ -17,11 +17,10 @@ import sd2223.trab1.multicast.Domain;;
 
 public class JavaUsers implements Users {
 
-	//private final String domain = Domain.domain;
+	// private final String domain = Domain.domain;
 	private final Map<String, User> users = new HashMap<>();
 	private Feeds feedsClient;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
-
 
 	@Override
 	public Result<String> createUser(User user) {
@@ -82,13 +81,13 @@ public class JavaUsers implements Users {
 	}
 
 	@Override
-	public Result<Void> checkUser(String username) {
-		Log.warning("User to check: " + username + " " + users.containsKey(username) + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		if (!users.containsKey(username)) {
-
+	public Result<Void> checkUser(String name) {
+		Log.warning("User to check: " + name + " " + users.containsKey(name)
+				+ "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		if (!users.containsKey(name)) {
 			return Result.error(ErrorCode.NOT_FOUND);
-		}
-		return Result.ok();
+		} else
+			return Result.ok();
 	}
 
 	@Override
@@ -106,7 +105,7 @@ public class JavaUsers implements Users {
 		users.remove(name);
 		if (feedsClient == null)
 			feedsClient = FeedsClientFactory.getFeedsClient(Domain.domain);
-		feedsClient.removeFeed(name+"@"+Domain.domain);
+		feedsClient.removeFeed(name + "@" + Domain.domain);
 		return Result.ok(user);
 	}
 
@@ -140,7 +139,7 @@ public class JavaUsers implements Users {
 
 	private void propagateDelete(User user) {
 		String userANDdomain = createString(user);
-		//feedsClient.removeFeed(userANDdomain);
+		// feedsClient.removeFeed(userANDdomain);
 	}
 
 	private String createString(User user) {

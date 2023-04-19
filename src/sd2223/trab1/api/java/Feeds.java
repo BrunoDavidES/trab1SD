@@ -14,6 +14,8 @@ public interface Feeds {
 	
 	Result<Void> removeFeed(String userANDdomain);
 	
+	Result<Void> removeFromSubscribedFeed(String userANDdomain, Message msg);
+	
 	Result<Message> getMessage(String userANDdomain, long mid);
 	
 	Result<List<Message>> getMessages(String userANDdomain, long time);
