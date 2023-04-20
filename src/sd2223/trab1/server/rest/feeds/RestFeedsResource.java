@@ -41,10 +41,15 @@ public class RestFeedsResource extends RestResource implements FeedsService {
 	public void removeFromPersonalFeed(String user, long mid, String pwd) {
 		super.fromJavaResult(impl.removeFromPersonalFeed(user, mid, pwd));
 	}
-	
+
 	@Override
 	public void removeFromSubscribedFeed(String user, Message msg) {
 		super.fromJavaResult(impl.removeFromSubscribedFeed(user, msg));
+	}
+
+	@Override
+	public void removeFromSubscribed(String user, String sub) {
+		super.fromJavaResult(impl.removeFromSubscribed(user, sub));
 	}
 
 	@Override

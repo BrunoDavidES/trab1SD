@@ -64,6 +64,12 @@ public class SoapFeedsClient extends SoapClient implements Feeds {
 	}
 	
 	@Override
+	public Result<Void> removeFromSubscribed(String userANDdomain, String sub) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public Result<Void> removeFeed(String userANDdomain) {
 		// TODO Auto-generated method stub
 		return null;

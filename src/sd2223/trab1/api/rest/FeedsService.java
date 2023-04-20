@@ -73,8 +73,13 @@ public interface FeedsService {
 	void removeFeed(@PathParam(USER) String user);
 	
 	@DELETE
-	@Path(PROPAGATE+"/{" + USER + "}")
+	@Path(PROPAGATE+"1/{" + USER + "}")
 	void removeFromSubscribedFeed(@PathParam(USER) String user, Message msg);
+	
+	@DELETE
+	@Path(PROPAGATE+"/{" + USER + "}/{" + USERSUB + "}")
+	void removeFromSubscribed(@PathParam(USER) String user, @PathParam(USERSUB) String sub);
+
 
 	/**
 	 * Obtains the message with id from the feed of user (may be a remote user)

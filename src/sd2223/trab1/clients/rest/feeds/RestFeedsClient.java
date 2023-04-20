@@ -59,6 +59,12 @@ public class RestFeedsClient extends RestClient implements Feeds {
 		return super.toJavaResult(r, Void.class);
 
 	}
+	
+	private Result<Void> clt_removeFromSubscribed(String userANDdomain, String sub) {
+		Response r = target.path(FeedsService.PROPAGATE).path(userANDdomain).path(sub).request().delete();
+		return super.toJavaResult(r, Void.class);
+
+	}
 
 	private Result<Message> clt_getMessage(String userANDdomain, long mid) {
 		Response r = target.path(userANDdomain).path(Long.toString(mid)).request().accept(MediaType.APPLICATION_JSON)
@@ -127,6 +133,11 @@ public class RestFeedsClient extends RestClient implements Feeds {
 		return super.reTry(() -> clt_removeFeed(userANDdomain));
 	}
 
+	@Override
+	public Result<Void> removeFromSubscribed(String userANDdomain, String sub) {
+		return super.reTry(() -> clt_removeFromSubscribed(userANDdomain, sub));
+	}
+	
 	@Override
 	public Result<Message> getMessage(String userANDdomain, long mid) {
 		return super.reTry(() -> clt_getMessage(userANDdomain, mid));
