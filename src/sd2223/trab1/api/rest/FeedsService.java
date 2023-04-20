@@ -24,6 +24,7 @@ public interface FeedsService {
 	String USERSUB = "userSub";
 	String PROPAGATE_POST = "/propagate/post";
 	String PROPAGATE_DELETE = "/propagate/delete";
+	String PROPAGATE_DELETE_SUB = "/propagate/delete/sub";
 	String ADD_SUBSCRIBER = "/addSub";
 	String DEL_SUBSCRIBER = "/delSub";
 
@@ -77,7 +78,7 @@ public interface FeedsService {
 	void removeFromSubscribedFeed(@PathParam(USER) String user, @PathParam(MID) long mid);
 
 	@DELETE
-	@Path(PROPAGATE_DELETE + "/{" + USER + "}/{" + USERSUB + "}")
+	@Path(PROPAGATE_DELETE_SUB + "/{" + USER + "}/{" + USERSUB + "}")
 	void removeFromSubscribed(@PathParam(USER) String user, @PathParam(USERSUB) String sub);
 
 	/**

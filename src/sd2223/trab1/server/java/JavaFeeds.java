@@ -120,7 +120,7 @@ public class JavaFeeds implements Feeds {
 			var msg = feed.get(mid);
 			if (msg != null) {
 				feed.remove(mid);
-				propagateDelete(username, msg.getId());
+				propagateDelete(userANDdomain, msg.getId());
 				return Result.ok();
 			} else {
 				Log.info("The message with the given ID does not exist");
@@ -188,13 +188,26 @@ public class JavaFeeds implements Feeds {
 	// VER MELHOR
 	@Override
 	public Result<Message> getMessage(String userANDdomain, long mid) {
+		String userDomain = userANDdomain.split("@")[1];
 		if (userANDdomain == null || mid == -1) {
 			Log.info("Null information was given");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 		String username = userANDdomain.split("@")[0];
-		if (usersClient == null)
+		//if (usersClient == null)
+		if(!Domain.domain.equals(userDomain)) {
+			usersClient = UsersClientFactory.getUsersClient(userDomain);
+			var response = usersClient.checkUser(username);
+			if (!response.isOK()) {
+				Log.info("User does not exist.");
+				return Result.error(ErrorCode.NOT_FOUND);
+			}
+			Feeds feedsClient = FeedsClientFactory.getFeedsClient(userDomain);
+
+			return feedsClient.getMessage(userANDdomain, mid);
+		}else{
 			usersClient = UsersClientFactory.getUsersClient(Domain.domain);
+
 		var response = usersClient.checkUser(username);
 		if (!response.isOK()) {
 			Log.info("User does not exist.");
@@ -219,6 +232,7 @@ public class JavaFeeds implements Feeds {
 				return Result.error(ErrorCode.NOT_FOUND);
 			}
 			return Result.ok(message);
+		}
 		}
 	}
 
