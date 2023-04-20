@@ -94,6 +94,7 @@ public class JavaFeeds implements Feeds {
 		return Result.ok();
 	}
 
+	//AHAHAHA
 	@Override
 	public Result<Void> removeFromPersonalFeed(String userANDdomain, long mid, String pwd) {
 		if (userANDdomain == null || pwd == null || mid == -1) {
@@ -113,13 +114,20 @@ public class JavaFeeds implements Feeds {
 			Log.info("The password is incorrect");
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
-		var msg = feeds.get(userANDdomain).get(mid);
-		if (feeds.get(userANDdomain).remove(mid) == null) {
-			Log.info("The message with the given ID does not exist");
+		if (feeds.containsKey(userANDdomain)) {
+			var feed = feeds.get(userANDdomain);
+			var msg = feed.get(mid);
+			if (msg != null) {
+				feed.remove(mid);
+				propagateDelete(username, msg);
+				return Result.ok();
+			} else {
+				Log.info("The message with the given ID does not exist");
+				return Result.error(ErrorCode.NOT_FOUND);
+			}
+		} else {
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
-		propagateDelete(username, msg);
-		return Result.ok();
 	}
 
 	@Override
