@@ -120,7 +120,7 @@ public class JavaFeeds implements Feeds {
 			var msg = feed.get(mid);
 			if (msg != null) {
 				feed.remove(mid);
-				propagateDelete(username, msg);
+				propagateDelete(username, msg.getId());
 				return Result.ok();
 			} else {
 				Log.info("The message with the given ID does not exist");
@@ -132,18 +132,18 @@ public class JavaFeeds implements Feeds {
 	}
 
 	@Override
-	public Result<Void> removeFromSubscribedFeed(String userANDdomain, Message msg) {
-		Log.info("user: " + userANDdomain + ", and messagein removeFromSubFeeds: " + msg + " #####################################################################");
-		if (userANDdomain == null || msg == null) {
+	public Result<Void> removeFromSubscribedFeed(String userANDdomain, long mid) {
+		Log.info("user: " + userANDdomain + ", and messagein removeFromSubFeeds: " + mid + " #####################################################################");
+		if (userANDdomain == null || mid == -1) {
 			Log.info("A null username or message was received");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
-		Log.info("user: " + userANDdomain + ", and messagein removeFromSubFeeds: " + msg + " $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+		Log.info("user: " + userANDdomain + ", and messagein removeFromSubFeeds: " + mid + " $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 		if (!userANDdomain.contains(Domain.domain)) {
 			Log.info("This is not the right domain");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
-		subscribedFeeds.get(userANDdomain).remove(msg.getId());
+		subscribedFeeds.get(userANDdomain).remove(mid);
 		return Result.ok();
 	}
 
@@ -400,14 +400,14 @@ public class JavaFeeds implements Feeds {
 		}
 	}
 
-	private void propagateDelete(String userANDdomain, Message message) {
-		Log.info("user: " + userANDdomain + ", and message: " + message + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+	private void propagateDelete(String userANDdomain, long mid) {
+		Log.info("user: " + userANDdomain + ", and message: " + mid + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
 		Set<String> userSubs = subscribers.get(userANDdomain);
 		if (userSubs != null) {
 			for (var sub : userSubs) {
 				String domain = sub.split("@")[1];
 				Log.info("domain: " + domain + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
-				FeedsClientFactory.getFeedsClient(domain).removeFromSubscribedFeed(sub, message);
+				FeedsClientFactory.getFeedsClient(domain).removeFromSubscribedFeed(sub, mid);
 
 			}
 		}

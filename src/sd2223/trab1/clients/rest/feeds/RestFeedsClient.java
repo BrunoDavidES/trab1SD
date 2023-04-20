@@ -17,6 +17,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.GenericType;
+
 @Singleton
 public class RestFeedsClient extends RestClient implements Feeds {
 
@@ -35,8 +36,8 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	}
 
 	private Result<Void> clt_postSubMessage(String userANDdomain, Message msg) {
-		Response r = target.path(FeedsService.PROPAGATE).path(userANDdomain).request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.entity(msg, MediaType.APPLICATION_JSON));
+		Response r = target.path(FeedsService.PROPAGATE_POST).path(userANDdomain).request()
+				.accept(MediaType.APPLICATION_JSON).post(Entity.entity(msg, MediaType.APPLICATION_JSON));
 		return super.toJavaResult(r, Void.class);
 
 	}
@@ -47,9 +48,10 @@ public class RestFeedsClient extends RestClient implements Feeds {
 		return super.toJavaResult(r, Void.class);
 
 	}
-	
-	private Result<Void> clt_removeFromSubscribedFeed(String userANDdomain, Message msg) {
-		Response r = target.path(FeedsService.PROPAGATE).path(userANDdomain).request().delete();
+
+	private Result<Void> clt_removeFromSubscribedFeed(String userANDdomain, long mid) {
+		Response r = target.path(FeedsService.PROPAGATE_DELETE).path(userANDdomain).path(Long.toString(mid)).request().accept(MediaType.APPLICATION_JSON)
+				.delete();
 		return super.toJavaResult(r, Void.class);
 
 	}
@@ -59,9 +61,9 @@ public class RestFeedsClient extends RestClient implements Feeds {
 		return super.toJavaResult(r, Void.class);
 
 	}
-	
+
 	private Result<Void> clt_removeFromSubscribed(String userANDdomain, String sub) {
-		Response r = target.path(FeedsService.PROPAGATE).path(userANDdomain).path(sub).request().delete();
+		Response r = target.path(FeedsService.PROPAGATE_DELETE).path(userANDdomain).path(sub).request().delete();
 		return super.toJavaResult(r, Void.class);
 
 	}
@@ -86,8 +88,8 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	}
 
 	private Result<Void> clt_addSubscriber(String userANDdomain, String sub) {
-		Response r = target.path(FeedsService.ADD_SUBSCRIBER).path(userANDdomain).path(sub).request().accept(MediaType.APPLICATION_JSON)
-				.post(Entity.entity(sub, MediaType.APPLICATION_JSON));
+		Response r = target.path(FeedsService.ADD_SUBSCRIBER).path(userANDdomain).path(sub).request()
+				.accept(MediaType.APPLICATION_JSON).post(Entity.entity(sub, MediaType.APPLICATION_JSON));
 		return super.toJavaResult(r, Void.class);
 	}
 
@@ -98,7 +100,8 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	}
 
 	private Result<Void> clt_removeSubscriber(String userANDdomain, String sub) {
-		Response r = target.path(FeedsService.DEL_SUBSCRIBER).path(userANDdomain).path(sub).request().accept(MediaType.APPLICATION_JSON).delete();
+		Response r = target.path(FeedsService.DEL_SUBSCRIBER).path(userANDdomain).path(sub).request()
+				.accept(MediaType.APPLICATION_JSON).delete();
 		return super.toJavaResult(r, Void.class);
 	}
 
@@ -122,10 +125,10 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	public Result<Void> removeFromPersonalFeed(String userANDdomain, long mid, String pwd) {
 		return super.reTry(() -> clt_removeFromPersonalFeed(userANDdomain, mid, pwd));
 	}
-	
+
 	@Override
-	public Result<Void> removeFromSubscribedFeed(String userANDdomain, Message msg) {
-		return super.reTry(() -> clt_removeFromSubscribedFeed(userANDdomain, msg));
+	public Result<Void> removeFromSubscribedFeed(String userANDdomain, long mid) {
+		return super.reTry(() -> clt_removeFromSubscribedFeed(userANDdomain, mid));
 	}
 
 	@Override
@@ -137,7 +140,7 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	public Result<Void> removeFromSubscribed(String userANDdomain, String sub) {
 		return super.reTry(() -> clt_removeFromSubscribed(userANDdomain, sub));
 	}
-	
+
 	@Override
 	public Result<Message> getMessage(String userANDdomain, long mid) {
 		return super.reTry(() -> clt_getMessage(userANDdomain, mid));
