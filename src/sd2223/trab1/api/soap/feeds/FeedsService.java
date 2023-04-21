@@ -4,6 +4,12 @@ import java.util.List;
 
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebService;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 import sd2223.trab1.api.Message;
 
 @WebService(serviceName=FeedsService.NAME, targetNamespace=FeedsService.NAMESPACE, endpointInterface=FeedsService.INTERFACE)
@@ -28,6 +34,9 @@ public interface FeedsService {
 	 */
 	@WebMethod
 	long postMessage(String user, String pwd, Message msg) throws FeedsException;
+	
+	@WebMethod
+	void postSubMessage(String user, Message msg) throws FeedsException;
 
 	/**
 	 * Removes the message identified by mid from the feed of user.
@@ -42,6 +51,15 @@ public interface FeedsService {
 	 */
 	@WebMethod
 	void removeFromPersonalFeed(String user, long mid, String pwd) throws FeedsException;
+	
+	@WebMethod
+	void removeFeed(String user) throws FeedsException;
+	
+	@WebMethod
+	void removeFromSubscribedFeed(String user, long mid) throws FeedsException;
+
+	@WebMethod
+	void removeFromSubscribed(String user, String sub) throws FeedsException;
 
 	/**
 	 * Obtains the message with id from the feed of user (may be a remote user)
@@ -80,6 +98,9 @@ public interface FeedsService {
 	 */
 	@WebMethod
 	void subUser(String user, String userSub, String pwd) throws FeedsException;
+	
+	@WebMethod
+	void addSubscriber(String user, String userSub) throws FeedsException;
 
 	/**
 	 * UnSubscribe a user
@@ -94,6 +115,9 @@ public interface FeedsService {
 	 */
 	@WebMethod
 	void unsubscribeUser(String user, String userSub, String pwd) throws FeedsException;
+	
+	@WebMethod
+	void removeSubscriber(String user, String userSub) throws FeedsException;
 
 	/**
 	 * Subscribed users.

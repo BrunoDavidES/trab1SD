@@ -14,56 +14,55 @@ import jakarta.xml.ws.Service;
 
 public class SoapUsersClient extends SoapClient implements Users {
 
-	public SoapUsersClient( URI serverURI ) {
-		super( serverURI );
+	public SoapUsersClient(URI serverURI) {
+		super(serverURI);
 	}
 
-	
 	private UsersService stub;
+
 	synchronized private UsersService stub() {
 		if (stub == null) {
 			QName QNAME = new QName(UsersService.NAMESPACE, UsersService.NAME);
-			Service service = Service.create(super.toURL(super.uri + WSDL), QNAME);			
+			Service service = Service.create(super.toURL(super.uri + WSDL), QNAME);
 			this.stub = service.getPort(sd2223.trab1.api.soap.users.UsersService.class);
-			super.setTimeouts( (BindingProvider) stub);
+			super.setTimeouts((BindingProvider) stub);
 		}
 		return stub;
 	}
-	
+
 	@Override
 	public Result<String> createUser(User user) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().createUser(user) ) );
+		return super.reTry(() -> super.toJavaResult(() -> stub().createUser(user)));
 	}
-	
+
 	@Override
 	public Result<User> getUser(String name, String pwd) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().getUser(name, pwd) ) );
+		return super.reTry(() -> super.toJavaResult(() -> stub().getUser(name, pwd)));
 	}
 
 	@Override
 	public Result<Void> verifyPassword(String name, String pwd) {
-		return super.reTry( () -> super.toJavaResult( () -> stub().verifyPassword(name, pwd) ) );
+		return super.reTry(() -> super.toJavaResult(() -> stub().verifyPassword(name, pwd)));
 	}
 
 	@Override
 	public Result<Void> checkUser(String name) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry(() -> super.toJavaResult(() -> stub().checkUser(name)));
 	}
 
 	@Override
 	public Result<User> updateUser(String name, String pwd, User user) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry(() -> super.toJavaResult(() -> stub().updateUser(name, pwd, user)));
 	}
 
 	@Override
 	public Result<User> deleteUser(String name, String pwd) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry(() -> super.toJavaResult(() -> stub().deleteUser(name, pwd)));
 	}
 
 	@Override
 	public Result<List<User>> searchUsers(String pattern) {
-		throw new RuntimeException("Not Implemented...");
+		return super.reTry(() -> super.toJavaResult(() -> stub().searchUsers(pattern)));
 	}
 
-	
 }

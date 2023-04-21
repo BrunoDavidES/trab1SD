@@ -31,6 +31,5 @@ public interface Feeds {
 	Result<Void> unsubscribeUser(String userANDdomain, String userSub, String pwd);
 	
 	Result<List<String>> listSubs(String userANDdomain);
-
-
+	
 }

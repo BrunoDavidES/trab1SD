@@ -24,7 +24,6 @@ public class RestFeedsServer {
 	public static final int PORT = 8080;
 	public static final String SERVICE = "FeedsService";
 	private static final String SERVER_URI_FMT = "http://%s:%s/rest";
-	private static final String MESSAGE = "%s:%s %s";
 
 	public static void main(String[] args) {
 		try {

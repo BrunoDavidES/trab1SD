@@ -75,8 +75,8 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	}
 
 	private Result<List<Message>> clt_getMessages(String userANDdomain, long time) {
-		Response r = target.path(userANDdomain).queryParam(UsersService.QUERY, time).request()
-				.accept(MediaType.APPLICATION_JSON).delete();
+		Response r = target.path(userANDdomain).queryParam(FeedsService.TIME, time).request()
+				.accept(MediaType.APPLICATION_JSON).get();
 		return super.toJavaResult(r, new GenericType<List<Message>>() {
 		});
 	}
