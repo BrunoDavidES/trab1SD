@@ -60,7 +60,7 @@ public class User {
 		return "User [name=" + name + ", pwd=" + pwd + ", displayName=" + displayName + ", domain=" + domain + "]";
 	}
 
-	public User creatClone(){
+	public User createClone(){
 		return new User(this.name, "", this.domain, this.displayName);
 	}
 }

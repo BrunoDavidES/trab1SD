@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import sd2223.trab1.api.User;
@@ -17,8 +18,7 @@ import sd2223.trab1.multicast.Domain;;
 
 public class JavaUsers implements Users {
 
-	// private final String domain = Domain.domain;
-	private final Map<String, User> users = new HashMap<>();
+	private final Map<String, User> users = new ConcurrentHashMap<>();
 	private Feeds feedsClient;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
 
@@ -30,10 +30,14 @@ public class JavaUsers implements Users {
 			Log.info("User object invalid. There's information missing!");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
-		if (users.putIfAbsent(user.getName(), user) != null) {
-			Log.info("User already exists.");
-			return Result.error(ErrorCode.CONFLICT);
+
+		synchronized (users) {
+			if (users.putIfAbsent(user.getName(), user) != null) {
+				Log.info("User already exists.");
+				return Result.error(ErrorCode.CONFLICT);
+			}
 		}
+
 		return Result.ok(createString(user));
 	}
 
@@ -44,10 +48,12 @@ public class JavaUsers implements Users {
 			Log.info("UserId or password null.");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
+
 		var user = users.get(name);
 		var r = validation(name, pwd, user);
 		if (!r.isOK())
 			return Result.error(r.error());
+
 		return Result.ok(user);
 	}
 
@@ -58,17 +64,22 @@ public class JavaUsers implements Users {
 			Log.info("There's missing information!");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
+
 		if (!user.getName().equals(name)) {
 			Log.info("Name does not match!");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
+
 		var existingUser = users.get(name);
 		var r = validation(name, pwd, existingUser);
 		if (!r.isOK())
 			return Result.error(r.error());
-		existingUser = modifyUser(existingUser, user);
-		users.put(name, existingUser);
-		return Result.ok(existingUser);
+
+		synchronized (users) {
+			existingUser = modifyUser(existingUser, user);
+			users.put(name, existingUser);
+			return Result.ok(existingUser);
+		}
 	}
 
 	@Override
@@ -82,11 +93,9 @@ public class JavaUsers implements Users {
 
 	@Override
 	public Result<Void> checkUser(String name) {
-		Log.warning("User to check: " + name + " " + users.containsKey(name)
-				+ "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		if (!users.containsKey(name)) {
+		if (!users.containsKey(name))
 			return Result.error(ErrorCode.NOT_FOUND);
-		} else
+		else
 			return Result.ok();
 	}
 
@@ -97,16 +106,21 @@ public class JavaUsers implements Users {
 			Log.info("UserId or password null.");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
+
 		var user = users.get(name);
 		var r = validation(name, pwd, user);
 		if (!r.isOK())
 			return Result.error(r.error());
+
 		propagateDelete(user);
-		users.remove(name);
-		if (feedsClient == null)
-			feedsClient = FeedsClientFactory.getFeedsClient(Domain.domain);
-		feedsClient.removeFeed(name + "@" + Domain.domain);
-		return Result.ok(user);
+
+		synchronized (users) {
+			users.remove(name);
+			if (feedsClient == null)
+				feedsClient = FeedsClientFactory.getFeedsClient(Domain.domain);
+			feedsClient.removeFeed(name + "@" + Domain.domain);
+			return Result.ok(user);
+		}
 	}
 
 	@Override
@@ -115,13 +129,15 @@ public class JavaUsers implements Users {
 			Log.info("UserId or password null.");
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
+
 		List<User> toList = new ArrayList<User>();
 		var entries = users.entrySet();
 		for (var e : entries) {
 			if (e.getKey().contains(pattern)) {
-				toList.add(e.getValue().creatClone());
+				toList.add(e.getValue().createClone());
 			}
 		}
+
 		return Result.ok(toList);
 	}
 
@@ -134,16 +150,18 @@ public class JavaUsers implements Users {
 			if (user.getPwd() != null)
 				existingUser.setPwd(user.getPwd());
 		}
+
 		return existingUser;
 	}
 
 	private void propagateDelete(User user) {
 		String userANDdomain = createString(user);
-		// feedsClient.removeFeed(userANDdomain);
+		if (feedsClient == null)
+			feedsClient = FeedsClientFactory.getFeedsClient(Domain.domain);
+		feedsClient.removeFeed(userANDdomain);
 	}
 
 	private String createString(User user) {
-
 		return user.getName() + "@" + Domain.domain;
 	}
 
@@ -152,10 +170,12 @@ public class JavaUsers implements Users {
 			Log.info("User does not exist.");
 			return Result.error(ErrorCode.NOT_FOUND);
 		}
+
 		if (!user.getPwd().equals(pwd)) {
 			Log.info("Password is incorrect.");
 			return Result.error(ErrorCode.FORBIDDEN);
 		}
+
 		return Result.ok();
 	}
 

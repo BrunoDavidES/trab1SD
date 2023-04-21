@@ -79,7 +79,7 @@ class DiscoveryImpl implements Discovery {
 	private static Discovery singleton;
 
 	// ADICIONADO
-	private Map<String, Collection<URI>> knownURIs = new HashMap<String, Collection<URI>>();
+	private Map<String, Collection<URI>> knownURIs = new ConcurrentHashMap<String, Collection<URI>>();
 
 	synchronized static Discovery getInstance() {
 		if (singleton == null) {

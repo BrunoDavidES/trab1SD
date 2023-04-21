@@ -63,8 +63,7 @@ public class RestFeedsClient extends RestClient implements Feeds {
 	}
 
 	private Result<Void> clt_removeFromSubscribed(String userANDdomain, String sub) {
-		Response r = target.path(FeedsService.PROPAGATE_DELETE_SUB).path(userANDdomain).path(sub).request().accept(MediaType.APPLICATION_JSON)
-				.delete();
+		Response r = target.path(FeedsService.PROPAGATE_DELETE_SUB).path(userANDdomain).path(sub).request().delete();
 		return super.toJavaResult(r, Void.class);
 
 	}
