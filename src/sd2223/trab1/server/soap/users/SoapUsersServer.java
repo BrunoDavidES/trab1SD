@@ -33,9 +33,7 @@ public class SoapUsersServer {
 
 		Endpoint.publish(serverURI.replace(ip, "0.0.0.0"), new SoapUsersWebService());
 		
-		Discovery announcement = Discovery.getInstance();
-		System.out.println("REACHED ANNOUNCEMENT");
-		announcement.announce(args[0]+":users", serverURI);
+		 Discovery.getInstance().announce(args[0]+":users", serverURI);
 
 		Log.info(String.format("%s Soap Server ready @ %s\n", SERVICE_NAME, serverURI));
 	}

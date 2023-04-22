@@ -61,7 +61,6 @@ public class RestUsersClient extends RestClient implements Users {
 		return super.toJavaResult(r, Void.class);
 	}
 
-	// ADICIONADO
 	private Result<Void> clt_checkUser(String name) {
 		Response r = target.path(UsersService.CHECK).path(name).request().get();
 		return super.toJavaResult(r, Void.class);
@@ -82,7 +81,6 @@ public class RestUsersClient extends RestClient implements Users {
 		return super.reTry(() -> clt_verifyPassword(name, pwd));
 	}
 
-	// ADICIONADO POR MANEL
 	@Override
 	public Result<Void> checkUser(String name) {
 		return super.reTry(() -> clt_checkUser(name));

@@ -64,9 +64,15 @@ public interface UsersService {
 	@WebMethod
 	List<User> searchUsers(String pattern) throws UsersException;	
 	
+	/*
+	 * Verifies if the given password is a match for the given user.
+	 */
 	@WebMethod
 	void verifyPassword(String name, String pwd) throws UsersException;
 
+	/*
+	 * Verifies if the user is registered already.
+	 */
 	@WebMethod
 	void checkUser(String name) throws UsersException;
 	

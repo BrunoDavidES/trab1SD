@@ -49,14 +49,18 @@ public interface UsersService {
 	@Produces(MediaType.APPLICATION_JSON)
 	User getUser(@PathParam(NAME) String name, @QueryParam(PWD) String pwd);
 
-	// ADICIONADO
+	/*
+	 * Verifies if the given password is a match for the given user.
+	 */
 	@GET
 	@Path("/{" + NAME + "}/" + PWD)
 	void verifyPassword(@PathParam(NAME) String name, @QueryParam(PWD) String pwd);
 
-	// ADICIONADO
+	/*
+	 * Verifies if the user is registered already.
+	 */
 	@GET
-	@Path(CHECK + "/{" + NAME + "}")
+	@Path(CHECK+"/{" + NAME + "}")
 	void checkUser(@PathParam(NAME) String name);
 
 	/**

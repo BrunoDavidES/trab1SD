@@ -21,7 +21,6 @@ import jakarta.inject.Singleton;
 public class RestFeedsResource extends RestResource implements FeedsService {
 
 	final Feeds impl;
-	// int id;
 
 	public RestFeedsResource(int id) {
 		this.impl = new JavaFeeds();
@@ -89,7 +88,6 @@ public class RestFeedsResource extends RestResource implements FeedsService {
 
 	@Override
 	public List<String> listSubs(String user) {
-
 		return super.fromJavaResult(impl.listSubs(user));
 	}
 

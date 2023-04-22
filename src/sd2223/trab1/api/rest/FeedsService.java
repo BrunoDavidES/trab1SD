@@ -49,6 +49,9 @@ public interface FeedsService {
 	@Produces(MediaType.APPLICATION_JSON)
 	long postMessage(@PathParam(USER) String user, @QueryParam(PWD) String pwd, Message msg);
 
+	/*
+	 * Posts the given message from a user previously subscribed.
+	 */
 	@POST
 	@Path(PROPAGATE_POST + "/{" + USER + "}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -69,14 +72,24 @@ public interface FeedsService {
 	@Path("/{" + USER + "}/{" + MID + "}")
 	void removeFromPersonalFeed(@PathParam(USER) String user, @PathParam(MID) long mid, @QueryParam(PWD) String pwd);
 
+	/*
+	 * Deletes the feed of a user now removed from its domain.
+	 */
 	@DELETE
 	@Path("/remove/{" + USER + "}")
 	void removeFeed(@PathParam(USER) String user);
 
+
+	/*
+	 * Deletes the given message from a user previously subscribed.
+	 */
 	@DELETE
 	@Path(PROPAGATE_DELETE + "/{" + USER + "}/{" + MID + "}")
 	void removeFromSubscribedFeed(@PathParam(USER) String user, @PathParam(MID) long mid);
 
+	/*
+	 * Deletes the subscribed user from this user's subscribers list.
+	 */
 	@DELETE
 	@Path(PROPAGATE_DELETE_SUB + "/{" + USER + "}/{" + USERSUB + "}")
 	void removeFromSubscribed(@PathParam(USER) String user, @PathParam(USERSUB) String sub);
@@ -125,6 +138,9 @@ public interface FeedsService {
 	@Produces(MediaType.APPLICATION_JSON)
 	void subUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd);
 
+	/*
+	 * Adds the subscribed user to this user's subscribers list.
+	 */
 	@POST
 	@Path(ADD_SUBSCRIBER + "/{" + USER + "}/{" + USERSUB + "}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -146,6 +162,9 @@ public interface FeedsService {
 	@Produces(MediaType.APPLICATION_JSON)
 	void unsubscribeUser(@PathParam(USER) String user, @PathParam(USERSUB) String userSub, @QueryParam(PWD) String pwd);
 
+	/*
+	 * Deletes the this user from the subUser subscribed list.
+	 */
 	@DELETE
 	@Path(DEL_SUBSCRIBER + "/{" + USER + "}/{" + USERSUB + "}")
 	@Produces(MediaType.APPLICATION_JSON)

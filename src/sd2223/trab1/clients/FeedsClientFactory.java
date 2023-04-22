@@ -28,9 +28,7 @@ public class FeedsClientFactory {
 	public static Feeds getFeedsClient(String domain) {
 		Discovery discovery = Discovery.getInstance();
 		URI[] domainserviceURI = discovery.knownUrisOf(domain+":feeds", 1);
-		var domainFeedsClient = get(domainserviceURI[0]);
-		return domainFeedsClient;
-//		return null;
+		return get(domainserviceURI[0]);
 	}
 	
 }

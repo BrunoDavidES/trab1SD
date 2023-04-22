@@ -27,13 +27,9 @@ public class RestUsersServer {
 	public static void main(String[] args) {
 		try {
 
-			String domain = args[0];
-			
-			Domain.setDomain(domain);
-
 			ResourceConfig config = new ResourceConfig();
 			config.register(new RestUsersResource());
-			Domain.setDomain(domain);
+			Domain.setDomain(args[0]);
 
 			String ip = InetAddress.getLocalHost().getHostAddress();
 
@@ -42,13 +38,7 @@ public class RestUsersServer {
 
 			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 
-			System.out.println("REACHED INSTANCE");
-//			String toAnnounce = String.format(MESSAGE, domain, "users", serverURI);
-//			Log.info(toAnnounce);
-			Discovery announcement = Discovery.getInstance();
-			System.out.println("REACHED ANNOUNCEMENT");
-			announcement.announce(domain+":users", serverURI);
-			System.out.println("ANNOUNCED");
+			Discovery.getInstance().announce(args[0]+":users", serverURI);
 
 			// More code can be executed here...
 		} catch (Exception e) {

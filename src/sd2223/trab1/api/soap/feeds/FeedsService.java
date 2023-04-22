@@ -17,7 +17,7 @@ public interface FeedsService {
 
 	static final String NAME = "feeds";
 	static final String NAMESPACE = "http://sd2223";
-	static final String INTERFACE = "sd2223.trab1.api.soap.FeedsService";
+	static final String INTERFACE = "sd2223.trab1.api.soap.feeds.FeedsService";
 	
 	/**
 	 * Posts a new message in the feed, associating it to the feed of the specific user.
@@ -35,6 +35,9 @@ public interface FeedsService {
 	@WebMethod
 	long postMessage(String user, String pwd, Message msg) throws FeedsException;
 	
+	/*
+	 * Posts the given message from a user previously subscribed.
+	 */
 	@WebMethod
 	void postSubMessage(String user, Message msg) throws FeedsException;
 
@@ -52,12 +55,21 @@ public interface FeedsService {
 	@WebMethod
 	void removeFromPersonalFeed(String user, long mid, String pwd) throws FeedsException;
 	
+	/*
+	 * Deletes the feed of a user now removed from its domain.
+	 */
 	@WebMethod
 	void removeFeed(String user) throws FeedsException;
-	
+
+	/*
+	 * Deletes the given message from a user previously subscribed.
+	 */
 	@WebMethod
 	void removeFromSubscribedFeed(String user, long mid) throws FeedsException;
 
+	/*
+	 * Deletes the subscribed user from this user's subscribers list.
+	 */
 	@WebMethod
 	void removeFromSubscribed(String user, String sub) throws FeedsException;
 
@@ -99,6 +111,9 @@ public interface FeedsService {
 	@WebMethod
 	void subUser(String user, String userSub, String pwd) throws FeedsException;
 	
+	/*
+	 * Adds the subscribed user to this user's subscribers list.
+	 */
 	@WebMethod
 	void addSubscriber(String user, String userSub) throws FeedsException;
 
@@ -116,6 +131,9 @@ public interface FeedsService {
 	@WebMethod
 	void unsubscribeUser(String user, String userSub, String pwd) throws FeedsException;
 	
+	/*
+	 * Deletes the this user from the subUser subscribed list.
+	 */
 	@WebMethod
 	void removeSubscriber(String user, String userSub) throws FeedsException;
 

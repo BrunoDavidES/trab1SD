@@ -3,7 +3,12 @@ package sd2223.trab1.clients.rest.users;
 import static sd2223.trab1.api.java.Result.error;
 import static sd2223.trab1.api.java.Result.ok;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -43,16 +48,29 @@ public class RestClient {
 	}
 
 	protected <T> Result<T> reTry(Supplier<Result<T>> func) {
-		for (int i = 0; i < MAX_RETRIES; i++)
-			try {
-				return func.get();
-			} catch (ProcessingException x) {
-				Log.fine("Timeout: " + x.getMessage());
-				sleep_ms(RETRY_SLEEP);
-			} catch (Exception x) {
-				x.printStackTrace();
-				return Result.error(ErrorCode.INTERNAL_ERROR);
-			}
+//		try {
+//			if (InetAddress.getLocalHost().isReachable(CONNECT_TIMEOUT)) {
+//				for(int i = 0; i < toRetry.size(); i++) {
+//					new Thread(() -> reTry(toRetry.get(i)));
+//				}
+				for (int i = 0; i < MAX_RETRIES; i++)
+					try {
+						return func.get();
+					} catch (ProcessingException x) {
+						Log.fine("Timeout: " + x.getMessage());
+						sleep_ms(RETRY_SLEEP);
+					} catch (Exception x) {
+						x.printStackTrace();
+						return Result.error(ErrorCode.INTERNAL_ERROR);
+					}
+//			}
+//		} catch (UnknownHostException e) {
+//
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		return Result.error(ErrorCode.TIMEOUT);
 	}
 
@@ -61,23 +79,23 @@ public class RestClient {
 			var status = r.getStatusInfo().toEnum();
 			if (status == Status.OK && r.hasEntity())
 				return ok(r.readEntity(entityType));
-			else 
-				if( status == Status.NO_CONTENT) return ok();
-			
+			else if (status == Status.NO_CONTENT)
+				return ok();
+
 			return error(getErrorCodeFrom(status.getStatusCode()));
 		} finally {
 			r.close();
 		}
 	}
-	
+
 	protected <T> Result<T> toJavaResult(Response r, GenericType<T> entityType) {
 		try {
 			var status = r.getStatusInfo().toEnum();
 			if (status == Status.OK && r.hasEntity())
 				return ok(r.readEntity(entityType));
-			else 
-				if( status == Status.NO_CONTENT) return ok();
-			
+			else if (status == Status.NO_CONTENT)
+				return ok();
+
 			return error(getErrorCodeFrom(status.getStatusCode()));
 		} finally {
 			r.close();

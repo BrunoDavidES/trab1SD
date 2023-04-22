@@ -65,7 +65,7 @@ class DiscoveryImpl implements Discovery {
 
 	// The pre-aggreed multicast endpoint assigned to perform discovery.
 
-	static final int DISCOVERY_RETRY_TIMEOUT = 5000;
+	static final int DISCOVERY_RETRY_TIMEOUT = 10000;
 	static final int DISCOVERY_ANNOUNCE_PERIOD = 1000;
 
 	// Replace with appropriate values...
@@ -78,7 +78,6 @@ class DiscoveryImpl implements Discovery {
 
 	private static Discovery singleton;
 
-	// ADICIONADO
 	private Map<String, Collection<URI>> knownURIs = new ConcurrentHashMap<String, Collection<URI>>();
 
 	synchronized static Discovery getInstance() {
@@ -120,10 +119,9 @@ class DiscoveryImpl implements Discovery {
 	}
 
 	@Override
-	// ADICIONADO
 	public URI[] knownUrisOf(String serviceName, int minEntries) {
 		Collection<URI> uris = knownURIs.get(serviceName);
-		while(uris == null) {
+		while (uris == null) {
 			try {
 				Thread.sleep(DISCOVERY_ANNOUNCE_PERIOD);
 			} catch (InterruptedException e) {
@@ -131,7 +129,7 @@ class DiscoveryImpl implements Discovery {
 			}
 			uris = knownURIs.get(serviceName);
 		}
-		return  uris.toArray(new URI[uris.size()]);
+		return uris.toArray(new URI[uris.size()]);
 	}
 
 	private void startListener() {
@@ -154,7 +152,6 @@ class DiscoveryImpl implements Discovery {
 							var serviceName = parts[0];
 							var uri = URI.create(parts[1]);
 							System.out.println("REACHED");
-							// ADICIONADO
 							store(serviceName, uri);
 						}
 					} catch (Exception x) {
@@ -167,17 +164,16 @@ class DiscoveryImpl implements Discovery {
 		}).start();
 	}
 
-	// ADICIONADO
 	private void store(String serviceName, URI uri) {
-			Collection<URI> serviceURIs = knownURIs.get(serviceName);
-			if (serviceURIs == null) {
-				serviceURIs = new ArrayList<URI>();
-				serviceURIs.add(uri);
-				knownURIs.put(serviceName, serviceURIs);
-			} else {
-				serviceURIs.add(uri);
-				knownURIs.put(serviceName, serviceURIs);
-			}
+		Collection<URI> serviceURIs = knownURIs.get(serviceName);
+		if (serviceURIs == null) {
+			serviceURIs = new ArrayList<URI>();
+			serviceURIs.add(uri);
+			knownURIs.put(serviceName, serviceURIs);
+		} else {
+			serviceURIs.add(uri);
+			knownURIs.put(serviceName, serviceURIs);
+		}
 	}
 
 }

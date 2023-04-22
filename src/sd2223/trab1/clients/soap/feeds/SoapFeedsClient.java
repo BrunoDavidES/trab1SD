@@ -21,7 +21,6 @@ public class SoapFeedsClient extends SoapClient implements Feeds {
 		super( serverURI );
 	}
 
-	
 	private FeedsService stub;
 	synchronized private FeedsService stub() {
 		if (stub == null) {

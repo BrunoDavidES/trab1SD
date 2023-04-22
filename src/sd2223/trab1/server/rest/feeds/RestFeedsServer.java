@@ -35,6 +35,7 @@ public class RestFeedsServer {
 			config.register(new RestFeedsResource(id));
 			Domain.setDomain(domain);
 			Domain.setID(id);
+			
 			String ip = InetAddress.getLocalHost().getHostAddress();
 
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
@@ -42,12 +43,7 @@ public class RestFeedsServer {
 			
 			Log.info(String.format("%s Server ready @ %s\n", SERVICE, serverURI));
 
-			System.out.println("REACHED INSTANCE");
-//			String toAnnounce = String.format(MESSAGE, domain, "feeds", serverURI);
-			Discovery announcement = Discovery.getInstance();
-			System.out.println("REACHED ANNOUNCEMENT");
-			announcement.announce(domain+":feeds", serverURI);
-			System.out.println("ANNOUNCED");
+			Discovery.getInstance().announce(domain+":feeds", serverURI);
 
 			// More code can be executed here...
 		} catch (Exception e) {

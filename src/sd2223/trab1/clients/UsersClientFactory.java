@@ -27,10 +27,7 @@ public class UsersClientFactory {
 	public static Users getUsersClient(String domain) {
 		Discovery discovery = Discovery.getInstance();
 		URI[] domainserviceURI = discovery.knownUrisOf(domain+":users", 1);
-		System.out.println(domainserviceURI[0].toString()+"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		var domainUsersClient = get(domainserviceURI[0]);
-		return domainUsersClient;
-//		return null;
+		return get(domainserviceURI[0]);
 	}
 
 }
