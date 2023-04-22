@@ -1,9 +1,14 @@
-package sd2223.trab1.clients.rest.feeds;
+package sd2223.trab1.clients.rest;
 
 import static sd2223.trab1.api.java.Result.error;
 import static sd2223.trab1.api.java.Result.ok;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URI;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -29,10 +34,10 @@ public class RestClient {
 	protected static final int RETRY_SLEEP = 3000;
 
 	final URI serverURI;
-	final Client client;
+	protected final Client client;
 	final ClientConfig config;
 
-	RestClient(URI serverURI) {
+	protected RestClient(URI serverURI) {
 		this.serverURI = serverURI;
 		this.config = new ClientConfig();
 
@@ -57,24 +62,30 @@ public class RestClient {
 	}
 
 	protected <T> Result<T> toJavaResult(Response r, Class<T> entityType) {
-		try (r) {
+		try {
 			var status = r.getStatusInfo().toEnum();
 			if (status == Status.OK && r.hasEntity())
 				return ok(r.readEntity(entityType));
-			else if (status == Status.NO_CONTENT) return ok();
+			else if (status == Status.NO_CONTENT)
+				return ok();
 
 			return error(getErrorCodeFrom(status.getStatusCode()));
+		} finally {
+			r.close();
 		}
 	}
-	//vê se concordas com esta maneira de por os try, não é necessário fazer finally
+
 	protected <T> Result<T> toJavaResult(Response r, GenericType<T> entityType) {
-		try (r) {
+		try {
 			var status = r.getStatusInfo().toEnum();
 			if (status == Status.OK && r.hasEntity())
 				return ok(r.readEntity(entityType));
-			else if (status == Status.NO_CONTENT) return ok();
+			else if (status == Status.NO_CONTENT)
+				return ok();
 
 			return error(getErrorCodeFrom(status.getStatusCode()));
+		} finally {
+			r.close();
 		}
 	}
 

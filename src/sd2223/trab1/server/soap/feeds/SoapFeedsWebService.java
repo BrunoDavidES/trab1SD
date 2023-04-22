@@ -9,6 +9,7 @@ import sd2223.trab1.api.java.Feeds;
 import sd2223.trab1.api.soap.feeds.FeedsException;
 import sd2223.trab1.api.soap.feeds.FeedsService;
 import sd2223.trab1.server.java.JavaFeeds;
+import sd2223.trab1.server.soap.SoapWebService;
 import jakarta.jws.WebService;
 
 @WebService(serviceName = FeedsService.NAME, targetNamespace = FeedsService.NAMESPACE, endpointInterface = FeedsService.INTERFACE)

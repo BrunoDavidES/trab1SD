@@ -49,12 +49,14 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 
-		var user = users.get(name);
-		var r = validation(name, pwd, user);
-		if (!r.isOK())
-			return Result.error(r.error());
+		synchronized (users) {
+			var user = users.get(name);
+			var r = validation(name, pwd, user);
+			if (!r.isOK())
+				return Result.error(r.error());
 
-		return Result.ok(user);
+			return Result.ok(user);
+		}
 	}
 
 	@Override
@@ -70,20 +72,22 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 
-		var existingUser = users.get(name);
-		var r = validation(name, pwd, existingUser);
-		if (!r.isOK())
-			return Result.error(r.error());
-
 		synchronized (users) {
+			var existingUser = users.get(name);
+			var r = validation(name, pwd, existingUser);
+			if (!r.isOK())
+				return Result.error(r.error());
+
 			existingUser = modifyUser(existingUser, user);
 			users.put(name, existingUser);
+
 			return Result.ok(existingUser);
 		}
 	}
 
 	@Override
 	public Result<Void> verifyPassword(String name, String pwd) {
+		Log.info("verifyPassword : user = " + name + "; pwd = " + pwd);
 		var res = getUser(name, pwd);
 		if (res.isOK())
 			return Result.ok();
@@ -92,7 +96,8 @@ public class JavaUsers implements Users {
 	}
 
 	@Override
-	public Result<Void> checkUser(String name) {
+	public synchronized Result<Void> checkUser(String name) {
+		Log.info("checkUser : user = " + name);
 		if (!users.containsKey(name))
 			return Result.error(ErrorCode.NOT_FOUND);
 		else
@@ -107,18 +112,21 @@ public class JavaUsers implements Users {
 			return Result.error(ErrorCode.BAD_REQUEST);
 		}
 
-		var user = users.get(name);
-		var r = validation(name, pwd, user);
-		if (!r.isOK())
-			return Result.error(r.error());
-
-		propagateDelete(user);
-
 		synchronized (users) {
+			var user = users.get(name);
+			var r = validation(name, pwd, user);
+			if (!r.isOK())
+				return Result.error(r.error());
+
 			users.remove(name);
+
 			if (feedsClient == null)
 				feedsClient = FeedsClientFactory.getFeedsClient(Domain.domain);
-			feedsClient.removeFeed(name + "@" + Domain.domain);
+
+			new Thread(() -> {
+				feedsClient.removeFeed(name + "@" + Domain.domain);
+			}).start();
+
 			return Result.ok(user);
 		}
 	}
@@ -131,34 +139,27 @@ public class JavaUsers implements Users {
 		}
 
 		List<User> toList = new ArrayList<User>();
-		var entries = users.entrySet();
-		for (var e : entries) {
-			if (e.getKey().contains(pattern)) {
-				toList.add(e.getValue().createClone());
+		synchronized (users) {
+			var entries = users.entrySet();
+			for (var e : entries) {
+				if (e.getKey().contains(pattern)) {
+					toList.add(e.getValue().createClone());
+				}
 			}
-		}
 
-		return Result.ok(toList);
+			return Result.ok(toList);
+		}
 	}
 
 	private User modifyUser(User existingUser, User user) {
 		if (user != null) {
 			if (user.getDisplayName() != null)
 				existingUser.setDisplayName(user.getDisplayName());
-			if (user.getDomain() != null)
-				existingUser.setDomain(user.getDomain());
 			if (user.getPwd() != null)
 				existingUser.setPwd(user.getPwd());
 		}
 
 		return existingUser;
-	}
-
-	private void propagateDelete(User user) {
-		String userANDdomain = createString(user);
-		if (feedsClient == null)
-			feedsClient = FeedsClientFactory.getFeedsClient(Domain.domain);
-		feedsClient.removeFeed(userANDdomain);
 	}
 
 	private String createString(User user) {

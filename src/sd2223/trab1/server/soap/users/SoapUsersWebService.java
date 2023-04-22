@@ -9,6 +9,7 @@ import sd2223.trab1.api.java.Users;
 import sd2223.trab1.api.soap.users.UsersException;
 import sd2223.trab1.api.soap.users.UsersService;
 import sd2223.trab1.server.java.JavaUsers;
+import sd2223.trab1.server.soap.SoapWebService;
 import jakarta.jws.WebService;
 
 @WebService(serviceName=UsersService.NAME, targetNamespace=UsersService.NAMESPACE, endpointInterface=UsersService.INTERFACE)
@@ -32,7 +33,6 @@ public class SoapUsersWebService extends SoapWebService<UsersException> implemen
 	public User getUser(String name, String pwd) throws UsersException {
 		return super.fromJavaResult( impl.getUser(name, pwd));
 	}
-
 
 	@Override
 	public void verifyPassword(String name, String pwd) throws UsersException {

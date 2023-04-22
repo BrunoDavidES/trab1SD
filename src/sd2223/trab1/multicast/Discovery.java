@@ -82,7 +82,6 @@ class DiscoveryImpl implements Discovery {
 
 	synchronized static Discovery getInstance() {
 		if (singleton == null) {
-			System.out.println("INSTANCE NULL");
 			singleton = new DiscoveryImpl();
 		}
 		return singleton;
@@ -119,7 +118,7 @@ class DiscoveryImpl implements Discovery {
 	}
 
 	@Override
-	public URI[] knownUrisOf(String serviceName, int minEntries) {
+	public synchronized URI[] knownUrisOf(String serviceName, int minEntries) {
 		Collection<URI> uris = knownURIs.get(serviceName);
 		while (uris == null) {
 			try {
@@ -164,7 +163,7 @@ class DiscoveryImpl implements Discovery {
 		}).start();
 	}
 
-	private void store(String serviceName, URI uri) {
+	private synchronized void store(String serviceName, URI uri) {
 		Collection<URI> serviceURIs = knownURIs.get(serviceName);
 		if (serviceURIs == null) {
 			serviceURIs = new ArrayList<URI>();
